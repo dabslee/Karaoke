@@ -1,7 +1,5 @@
 import pygame
-import threading
-import random
-import datetime
+import time
 
 import auxiliary
 
@@ -12,16 +10,26 @@ import auxiliary
 #     continuous_update(self)
 #     render(self, screen)
 
-def vecdist(a, b):
-    return ((a[0]-b[0])**2 + (a[1]-b[1])**2)**0.5
+# Kwargs enum
+class KWARGS:
+    STATE = "state"
+    SCORE = "score"
 
-# General
+# States enum
+class STATES():
+    INTRO = "Intro" # The startup screen
+    HELP = "Help" # The help screen
+    START = "Start" # Waiting to begin recording
+    LISTENING = "Listening" # Recording the audios
+    RESULTS = "Results" # Displaying the results
+
+# The sprite class
 class Sprite():
     _instances = list()
     def __init__(self, kwargs):
         Sprite._instances.append(self)
     def event_update(self, event, kwargs):
-        pass
+        return 0
     def continuous_update(self, kwargs):
         pass
     def render(self, screen, kwargs):
@@ -34,114 +42,226 @@ class Sprite():
     def delete(self):
         Sprite._instances.remove(self)
 
-class SurfaceSprite(Sprite):
-    alpha = 255
-    surface = pygame.Surface((100,100))
-    location = (0,0)
-    
-    fading = False
-    fadestart = datetime.datetime.now()
-    fadetime = 1
+# General image sprite class
+class ImageSprite(Sprite):
+    costume = None
+    position = (0,0)
+    dimensions = (0,0)
+    alpha = 0
 
-    def __init__(self, surface, location, kwargs):
-        self.surface = surface
-        self.location = location
+    def __init__(self, kwargs, imagepath):
+        self.costume = auxiliary.get_image(imagepath)
+        self.dimensions = self.costume.get_rect().size
         Sprite.__init__(self, kwargs)
 
-    def event_update(self, event, kwargs):
-        Sprite.event_update(self, event, kwargs);
+    def render(self, screen, kwargs):
+        screen.blit(pygame.transform.scale(self.costume, self.dimensions), self.position)
+        Sprite.render(self, screen, kwargs)
+
+    # Check if it's clicked
+    def touchingmouse(self):
+        pos = pygame.mouse.get_pos()
+        if (pos[0] >= self.position[0] and pos[0] <= self.position[0] + self.dimensions[0] and 
+            pos[1] >= self.position[1] and pos[1] <= self.position[1] + self.dimensions[1]):
+            return True
+        return False
+
+# The background sprite
+# Also initializes all the kwarg variables
+class Background(ImageSprite):
+    def __init__(self, kwargs):
+        kwargs[KWARGS.STATE] = STATES.INTRO
+        kwargs[KWARGS.SCORE] = 0
+        ImageSprite.__init__(self, kwargs, "neon_background.png")
+
+# The logo/title image
+class Title(ImageSprite):
+    def __init__(self, kwargs):
+        ImageSprite.__init__(self, kwargs, "title.png")
 
     def continuous_update(self, kwargs):
-        secondssince = (datetime.datetime.now()-self.fadestart).total_seconds()
-        if self.fading and self.alpha > 0:
-            self.alpha = max(0, 255-255/self.fadetime*secondssince)
-        elif not self.fading and self.alpha < 255:
-            self.alpha = min(255, 255/self.fadetime*secondssince)
-        Sprite.continuous_update(self, kwargs);
+        windowsize = pygame.display.get_surface().get_size()
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            self.dimensions = self.costume.get_rect().size
+            self.position = (windowsize[0]//2-self.dimensions[0]//2, windowsize[1]//5)
+        elif (kwargs[KWARGS.STATE] == STATES.HELP):
+            self.position = (20,20)
+            self.dimensions = [i//2 for i in self.costume.get_rect().size]
+        elif (kwargs[KWARGS.STATE] == STATES.START):
+            self.position = (windowsize[0]//2-self.dimensions[0]//2, windowsize[1]//5)
+        ImageSprite.continuous_update(self, kwargs)
+
+    def assume_position(self):
+        windowsize = pygame.display.get_surface().get_size()
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            self.position = (windowsize[0]//2-self.dimensions[0]//2, windowsize[1]//5)
+        elif (kwargs[KWARGS.STATE] == STATES.HELP):
+            self.position = (20,20)
+
+# The play button you press to start
+class PlayButton(ImageSprite):
+    def __init__(self, kwargs):
+        ImageSprite.__init__(self, kwargs, "play.png")
 
     def render(self, screen, kwargs):
-        auxiliary.blit_alpha(screen, self.surface, self.location, self.alpha)
-        Sprite.render(self, screen, kwargs);
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            if (self.touchingmouse()):
+                factor = 1.1
+                largerdim = [int(i*factor) for i in self.dimensions]
+                shiftedpos = (self.position[0]-(factor-1)*self.dimensions[0]/2,
+                              self.position[1]-(factor-1)*self.dimensions[1]/2)
+                screen.blit(pygame.transform.scale(self.costume, largerdim), shiftedpos)
+                Sprite.render(self, screen, kwargs)
+            else:
+                ImageSprite.render(self, screen, kwargs)
+        else:
+            Sprite.render(self, screen, kwargs)
+    
+    def event_update(self, event, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    kwargs[KWARGS.STATE] = STATES.START
+                    return 1
+            elif (event.type == pygame.VIDEORESIZE):
+                windowsize = pygame.display.get_surface().get_size()
+                self.position = (windowsize[0]//2-self.dimensions[0]//2, int(windowsize[1]/2.5))
+        return ImageSprite.event_update(self, event, kwargs)
 
-    def hide(self):
-        self.fading = True
-        self.alpha = 0
+# The button you press to open the help screen
+class HelpButton(ImageSprite):
+    def __init__(self, kwargs):
+        ImageSprite.__init__(self, kwargs, "help.png")
 
-    def show(self):
-        self.fading = False
-        self.alpha = 255
+    def render(self, screen, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            if (self.touchingmouse()):
+                factor = 1.1
+                largerdim = [int(i*factor) for i in self.dimensions]
+                shiftedpos = (self.position[0]-(factor-1)*self.dimensions[0]/2,
+                              self.position[1]-(factor-1)*self.dimensions[1]/2)
+                screen.blit(pygame.transform.scale(self.costume, largerdim), shiftedpos)
+                Sprite.render(self, screen, kwargs)
+            else:
+                ImageSprite.render(self, screen, kwargs)
+        else:
+            Sprite.render(self, screen, kwargs)
+    
+    def event_update(self, event, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.INTRO):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    kwargs[KWARGS.STATE] = STATES.HELP
+                    return 1
+            elif (event.type == pygame.VIDEORESIZE):
+                windowsize = pygame.display.get_surface().get_size()
+                self.position = (windowsize[0]//2-self.dimensions[0]//2, int(windowsize[1]/2))
+        return ImageSprite.event_update(self, event, kwargs)
 
-    def fade_out(self, fadetime=1):
-        self.fading = True
-        self.fadestart = datetime.datetime.now()
-        self.fadetime = fadetime
-
-    def fade_in(self, fadetime=1):
-        self.fading = False
-        self.fadetime = fadetime
-        self.fadestart = datetime.datetime.now()
-
-    def go_to_front(self):
-        self.delete()
-        Sprite._instances.append(self)
-
-class TextSprite(SurfaceSprite):
-    font = "TNR"
-    fontsize = 20
-    fontcolor = auxiliary.COLORS["BLACK"]
-    centered = False
-    texttrack = ""
-
-    def __init__(self, text, location, kwargs, font="TNR", fontsize=20, fontcolor=auxiliary.COLORS["WHITE"]):
-        self.font = font
-        self.fontsize = fontsize
-        self.fontcolor = fontcolor
-        self.texttrack = text
-        myfont = pygame.font.Font("resources/fonts/" + font + ".ttf", fontsize)
-        surface = myfont.render(text, True, fontcolor)
-        if (location[0] == -1):
-            self.centered = True
-            location = (auxiliary.resolution[0]/2-surface.get_width()/2, location[1])
-        SurfaceSprite.__init__(self, surface, location, kwargs)
-
-    def set_text(self, text):
-        myfont = pygame.font.Font("resources/fonts/" + self.font + ".ttf", self.fontsize)
-        self.surface = myfont.render(text, True, self.fontcolor)
-        if self.centered:
-            self.location = (auxiliary.resolution[0]/2-self.surface.get_width()/2, self.location[1])
-        self.texttrack = text
-
-    def get_text(self):
-        return self.texttrack
-
-class ImageSprite(SurfaceSprite):
-    imagepath = ""
-    size = (-1,-1)
-
-    def __init__(self, imagepath, location, kwargs, size=(-1,-1)):
-        self.imagepath = imagepath
-        self.size = size
-        surface = auxiliary.get_image(imagepath)
-        if (size[0] != -1):
-            surface = pygame.transform.scale(surface, size)
-        SurfaceSprite.__init__(self, surface, location, kwargs)
+# The help screen
+class HelpBox(ImageSprite):
+    def __init__(self, kwargs):
+        ImageSprite.__init__(self, kwargs, "helpbox.png")
 
     def continuous_update(self, kwargs):
-        if (self.size[0] != -1):
-            self.surface = pygame.transform.scale(auxiliary.get_image(self.imagepath), self.size)
-        SurfaceSprite.continuous_update(self, kwargs);
+        windowsize = pygame.display.get_surface().get_size()
+        self.dimensions = (int(windowsize[1]/1.5), int(windowsize[1]/1.5))
+        self.position = (windowsize[0]//2-self.dimensions[0]//2, int(windowsize[1]/5))
+        ImageSprite.continuous_update(self, kwargs)
 
-class Background(Sprite):
-    move_on = True
+    def render(self, screen, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.HELP):
+            ImageSprite.render(self, screen, kwargs)
+        else:
+            Sprite.render(self, screen, kwargs)
+    
+    def event_update(self, event, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.HELP):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    kwargs[KWARGS.STATE] = STATES.INTRO
+                    return 1
+        return ImageSprite.event_update(self, event, kwargs)
+
+# Press to start recording, press again to stop recording
+class RecordButton(ImageSprite):
+    rcex = auxiliary.Recorder(auxiliary.Recorder.EXTERNAL)
+    rcin = auxiliary.Recorder(auxiliary.Recorder.INTERNAL)
 
     def __init__(self, kwargs):
-        Sprite.__init__(self, kwargs)
-
-    def event_update(self, event, kwargs):
-        Sprite.event_update(self, event, kwargs)
-
-    def continuous_update(self, kwargs):
-        Sprite.continuous_update(self, kwargs)
+        ImageSprite.__init__(self, kwargs, "recordlogo_off.png")
+        self.dimensions = [int(i*0.5) for i in self.dimensions]
 
     def render(self, screen, kwargs):
-        Sprite.render(self, screen, kwargs)
+        windowsize = pygame.display.get_surface().get_size()
+        self.position = (windowsize[0]//2-self.dimensions[0]//2, int(windowsize[1]/2.2))
+        if (kwargs[KWARGS.STATE] in [STATES.INTRO, STATES.HELP]):
+            Sprite.render(self, screen, kwargs)
+        elif (kwargs[KWARGS.STATE] in [STATES.LISTENING]):
+            self.costume = auxiliary.get_image("recordlogo_on.png")
+            ImageSprite.render(self, screen, kwargs)
+        else:
+            self.costume = auxiliary.get_image("recordlogo_off.png")
+            ImageSprite.render(self, screen, kwargs)
+
+    def event_update(self, event, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.START):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    kwargs[KWARGS.STATE] = STATES.LISTENING
+                    self.rcex.begin_recording()
+                    self.rcin.begin_recording()
+                    return 1
+        elif (kwargs[KWARGS.STATE] == STATES.LISTENING):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    self.rcex.end_recording()
+                    self.rcin.end_recording()
+                    kwargs[KWARGS.SCORE] = int(100*auxiliary.compareNparr(self.rcex.fullrec, self.rcin.fullrec))
+                    kwargs[KWARGS.STATE] = STATES.RESULTS
+                    return 1
+        return ImageSprite.event_update(self, event, kwargs)
+
+# Shows the score on results screen
+class Score(Sprite):
+    def render(self, screen, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.RESULTS):
+            charwidth = 80
+            windowsize = pygame.display.get_surface().get_size()
+            images = [pygame.transform.scale(auxiliary.get_image("digits/"+thedigit+".png"), (charwidth,charwidth*181//125))
+                      for thedigit in str(kwargs[KWARGS.SCORE])]
+            for i in range(len(images)):
+                screen.blit(images[i], (int(windowsize[0]/2-charwidth*len(str(kwargs[KWARGS.SCORE]))/2+i*charwidth),
+                                        int(windowsize[1]/1.5)))
+
+# The button to go back to ready-to-record on results screen
+class BackToStart(ImageSprite):
+    def __init__(self, kwargs):
+        ImageSprite.__init__(self, kwargs, "okay.png")
+        self.dimensions = [i//2 for i in self.dimensions]
+
+    def render(self, screen, kwargs):
+        windowsize = pygame.display.get_surface().get_size()
+        self.position = (windowsize[0]//2-self.dimensions[0]//2, int(windowsize[1]/1.2))
+        if (kwargs[KWARGS.STATE] == STATES.RESULTS):
+            if (self.touchingmouse()):
+                factor = 1.1
+                largerdim = [int(i*factor) for i in self.dimensions]
+                shiftedpos = (self.position[0]-(factor-1)*self.dimensions[0]/2,
+                              self.position[1]-(factor-1)*self.dimensions[1]/2)
+                screen.blit(pygame.transform.scale(self.costume, largerdim), shiftedpos)
+                Sprite.render(self, screen, kwargs)
+            else:
+                ImageSprite.render(self, screen, kwargs)
+        else:
+            Sprite.render(self, screen, kwargs)
+    
+    def event_update(self, event, kwargs):
+        if (kwargs[KWARGS.STATE] == STATES.RESULTS):
+            if (event.type == pygame.MOUSEBUTTONDOWN):
+                if self.touchingmouse():
+                    kwargs[KWARGS.STATE] = STATES.START
+                    return 1
+            elif (event.type == pygame.VIDEORESIZE):
+                windowsize = pygame.display.get_surface().get_size()
+        return ImageSprite.event_update(self, event, kwargs)
