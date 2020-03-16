@@ -1,4 +1,3 @@
-import pygame
 import os
 import sounddevice
 import scipy.io.wavfile
@@ -7,12 +6,8 @@ import numpy
 
 import random
 
-# GAME SETTINGS
-
 gametitle = "Karaoke Unlimited"
 fps = 60
-
-# GENERAL USE
 
 # Basic color library
 COLORS = {"BLACK": (0,0,0),
@@ -51,11 +46,11 @@ class Recorder:
     targetfilepath = "resources/audio/" + externalinternal + ".wav"
 
     recording = False
-
     fullrec = None
 
     def __init__(self, externalinternal):
         self.externalinternal = externalinternal
+        self.targetfilepath = "resources/audio/" + externalinternal + ".wav"
 
     def record(self):
         sectionrec = sounddevice.rec(int(self.samplings*self.fs), samplerate=self.fs, channels=2)
@@ -77,4 +72,17 @@ class Recorder:
 
 # Compares two numpy arrays and returns similarity
 def compareNparr(arr1, arr2):
-    return random.random()**0.5
+    list1 = arr1.tolist()
+    list2 = arr2.tolist()
+    compels = min(len(list1), len(list2))
+
+    # Calculate manhattan distance between arr1 and arr2
+    manhattan = 0
+    for i in range(compels):
+        manhattan += abs(list1[i][0] - list2[i][0])
+        manhattan += abs(list1[i][1] - list2[i][1])
+        
+    # Calculate final score
+    maxmanhattan = 2*compels
+    score = 1 - (manhattan/maxmanhattan)**(0.01)
+    return score

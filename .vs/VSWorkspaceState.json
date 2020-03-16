@@ -1,4 +1,9 @@
 {
-  "ExpandedNodes": [],
+  "ExpandedNodes": [
+    "",
+    "\\resources",
+    "\\resources\\videos"
+  ],
+  "SelectedNode": "\\resources\\videos\\RickRoll.mp4",
   "PreviewInSolutionExplorer": false
 }
