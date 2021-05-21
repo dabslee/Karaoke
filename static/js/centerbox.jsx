@@ -1,3 +1,14 @@
+var selectedVidId;
+var results = [];
+
+class SearchResult {
+    constructor(title, thumb, id) {
+        this.title = title;
+        this.thumb = thumb;
+        this.id = id;
+    }
+}
+
 class Content extends React.Component {
     constructor(props) {
         super(props);
@@ -14,16 +25,17 @@ class Content extends React.Component {
                 part: 'snippet',
                 maxResults: 10
             });
-            request.execute(function(response)  {
-                $('#results').empty()
+            request.execute(function(response) {
+                results = [];
                 var srchItems = response.result.items;
                 $.each(srchItems, function(index, item){
-                    var vidTitle = '<div style="margin-left:30px;">' + item.snippet.title + '</div>';
+                    var vidTitle = item.snippet.title;
                     var vidThumburl =  item.snippet.thumbnails.default.url;
-                    var vidThumbimg = '<img id="thumb" src="'+vidThumburl+'" alt="No  Image  Available." style="width:204px;height:128px;border-radius:10px">';
-                    $('#results').append('<div class="searchresult">' + vidThumbimg + vidTitle + '</div>');
-                })
-            })
+                    var vidId = item.id.videoId;
+                    results.push(new SearchResult(vidTitle, vidThumburl, vidId));
+                });
+                $('#refresher').click();
+            });
         });
     }
 
@@ -55,14 +67,58 @@ class Content extends React.Component {
                 </div>
             );
         } else if (this.state.page == "start") {
+            var searchresults = [];
+            for (let result of results) {
+                searchresults.push(
+                    <div onClick={() => this.setState({page : "watch" + result.id})} class="searchresult">
+                        <img src={result.thumb} alt="No thumbnail available"/>
+                        <p style={{marginLeft: "20px"}}>{result.title}</p>
+                    </div>
+                );
+            }
             return (
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginTop:"10%"}}>
                     <div class="logo2" style={{fontWeight:"thin"}}><b>Search for a song:</b></div>
                     <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:"30px"}}>
                         <input id="query" placeholder="e.g. Never Gonna Give You Up"></input>
-                        <div class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
+                        <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
+                        <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
                     </div>
-                    <div id="results" style={{display:"flex", flexDirection:"column", marginBottom:"30px"}}></div>
+                    <div id="results" style={{display:"flex", flexDirection:"column", marginBottom:"30px"}}>{searchresults}</div>
+                </div>
+            );
+        } else if (this.state.page == "start2") {
+            var searchresults = [];
+            for (let result of results) {
+                searchresults.push(
+                    <div onClick={() => this.setState({page : "watch" + result.id})} class="searchresult">
+                        <img src={result.thumb} alt="No thumbnail available"/>
+                        <p style={{marginLeft: "20px"}}>{result.title}</p>
+                    </div>
+                );
+            }
+            return (
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginTop:"10%"}}>
+                    <div class="logo2" style={{fontWeight:"thin"}}><b>Search for a song:</b></div>
+                    <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:"30px"}}>
+                        <input id="query" placeholder="e.g. Never Gonna Give You Up"></input>
+                        <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
+                        <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
+                    </div>
+                    <div id="results" style={{display:"flex", flexDirection:"column", marginBottom:"30px"}}>{searchresults}</div>
+                </div>
+            );
+        } else if (this.state.page.includes("watch")) {
+            let link = "https://www.youtube.com/embed/" + this.state.page.substring(5);
+            return (
+                <div class="centerbox">
+                    <iframe width="1000" height="500"
+                        src={link}>
+                    </iframe>
+                    <div style={{display:"flex", flexDirection:"row"}}>
+                        <div class="neonBtn" onClick={() => this.setState({page : "start"})}>BACK</div>
+                        <div class="neonBtn">BEGIN</div>
+                    </div>
                 </div>
             );
         }
@@ -71,3 +127,8 @@ class Content extends React.Component {
 
 const domContainer = document.querySelector('#content');
 ReactDOM.render(React.createElement(Content), domContainer);
+
+document.addEventListener('keydown', (e) => {
+    if (e.code === "Enter" && document.getElementById("searchbutton"))
+        document.getElementById("searchbutton").click();
+});
