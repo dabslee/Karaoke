@@ -39,6 +39,10 @@ class Content extends React.Component {
         });
     }
 
+    playVideo = () => {
+        $('#youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*');
+    }
+
     render() {
         if (this.state.page == "home") {
             return (
@@ -112,12 +116,12 @@ class Content extends React.Component {
             let link = "https://www.youtube.com/embed/" + this.state.page.substring(5);
             return (
                 <div class="centerbox">
-                    <iframe width="1000" height="500"
+                    <iframe id="youtube-video" width="1000" height="500"
                         src={link}>
                     </iframe>
                     <div style={{display:"flex", flexDirection:"row"}}>
                         <div class="neonBtn" onClick={() => this.setState({page : "start"})}>BACK</div>
-                        <div class="neonBtn">BEGIN</div>
+                        <div class="neonBtn" onClick={this.playVideo}>BEGIN</div>
                     </div>
                 </div>
             );
