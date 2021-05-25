@@ -39,10 +39,6 @@ class Content extends React.Component {
         });
     }
 
-    playVideo = () => {
-        $('#youtube-video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*');
-    }
-
     render() {
         if (this.state.page == "home") {
             return (
@@ -113,15 +109,15 @@ class Content extends React.Component {
                 </div>
             );
         } else if (this.state.page.includes("watch")) {
-            let link = "https://www.youtube.com/embed/" + this.state.page.substring(5);
+            let link = "https://www.youtube.com/embed/" + this.state.page.substring(5) + "?enablejsapi=1&version=3&playerapiid=ytplayer";
             return (
                 <div class="centerbox">
-                    <iframe id="youtube-video" width="1000" height="500"
+                    <iframe id="video" width="1000" height="500"
                         src={link}>
                     </iframe>
                     <div style={{display:"flex", flexDirection:"row"}}>
                         <div class="neonBtn" onClick={() => this.setState({page : "start"})}>BACK</div>
-                        <div class="neonBtn" onClick={this.playVideo}>BEGIN</div>
+                        <div id="begin-button" class="neonBtn" onClick={() => $('#video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*')}>BEGIN</div>
                     </div>
                 </div>
             );
