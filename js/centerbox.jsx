@@ -109,10 +109,10 @@ class Content extends React.Component {
                 </div>
             );
         } else if (this.state.page.includes("watch")) {
-            let link = "https://www.youtube.com/embed/" + this.state.page.substring(5) + "?enablejsapi=1&version=3&playerapiid=ytplayer";
+            let link = "http://www.youtube.com/embed/" + this.state.page.substring(5) + "?enablejsapi=1&disablekb=1";
             return (
                 <div class="centerbox">
-                    <iframe id="video" width="1000" height="500"
+                    <iframe id="video" width="1000" height="500" style={{pointerEvents:"none"}}
                         src={link}>
                     </iframe>
                     <div style={{display:"flex", flexDirection:"row"}}>
