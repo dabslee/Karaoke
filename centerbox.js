@@ -322,7 +322,8 @@ var Content = function (_React$Component) {
                     )
                 );
             } else if (this.state.page.includes("watch")) {
-                var link = "http://www.youtube.com/embed/" + this.state.page.substring(5) + "?enablejsapi=1&disablekb=1";
+                selectedVidId = this.state.page.substring(5);
+                var link = "http://www.youtube.com/embed/" + selectedVidId + "?enablejsapi=1&disablekb=1";
                 return React.createElement(
                     'div',
                     { 'class': 'centerbox' },
