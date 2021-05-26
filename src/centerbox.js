@@ -84,7 +84,7 @@ class Content extends React.Component {
                         <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
                         <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
                     </div>
-                    <div id="results" style={{display:"flex", flexDirection:"column", marginBottom:"30px"}}>{searchresults}</div>
+                    <div id="results">{searchresults}</div>
                 </div>
             );
         } else if (this.state.page == "start2") {
@@ -103,9 +103,9 @@ class Content extends React.Component {
                     <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:"30px"}}>
                         <input id="query" placeholder="e.g. Never Gonna Give You Up"></input>
                         <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
-                        <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
+                        <div id="refresher" onClick={() => this.setState({page : "start"})}></div>
                     </div>
-                    <div id="results" style={{display:"flex", flexDirection:"column", marginBottom:"30px"}}>{searchresults}</div>
+                    <div id="results">{searchresults}</div>
                 </div>
             );
         } else if (this.state.page.includes("watch")) {

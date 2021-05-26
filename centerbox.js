@@ -239,7 +239,7 @@ var Content = function (_React$Component) {
                     ),
                     React.createElement(
                         'div',
-                        { id: 'results', style: { display: "flex", flexDirection: "column", marginBottom: "30px" } },
+                        { id: 'results' },
                         searchresults
                     )
                 );
@@ -312,12 +312,12 @@ var Content = function (_React$Component) {
                             )
                         ),
                         React.createElement('div', { id: 'refresher', onClick: function onClick() {
-                                return _this2.setState({ page: "start2" });
+                                return _this2.setState({ page: "start" });
                             } })
                     ),
                     React.createElement(
                         'div',
-                        { id: 'results', style: { display: "flex", flexDirection: "column", marginBottom: "30px" } },
+                        { id: 'results' },
                         searchresults
                     )
                 );
