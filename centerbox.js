@@ -339,11 +339,11 @@ var Content = function (_React$Component) {
                 );
             } else if (this.state.page.includes("watch")) {
                 selectedVidId = this.state.page.substring(5);
-                var link = "http://www.youtube.com/embed/" + selectedVidId + "?enablejsapi=1&disablekb=1";
+                var link = "http://www.youtube.com/embed/" + selectedVidId + "?enablejsapi=1&disablekb=1&controls=0";
                 return React.createElement(
                     'div',
                     { 'class': 'centerbox' },
-                    React.createElement('iframe', { id: 'video', width: '1000', height: '500', style: { pointerEvents: "none" },
+                    React.createElement('iframe', { id: 'video', width: '80%', height: '80%', style: { pointerEvents: "none" },
                         src: link }),
                     React.createElement(
                         'div',
