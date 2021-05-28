@@ -17,6 +17,7 @@ class Content extends React.Component {
     }
 
     keyWordsearch = () => {
+        const parser = new DOMParser();
         gapi.client.setApiKey('AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE');
         gapi.client.load('youtube', 'v3', function(){
             var q = $('#query').val();
@@ -29,7 +30,8 @@ class Content extends React.Component {
                 results = [];
                 var srchItems = response.result.items;
                 $.each(srchItems, function(index, item){
-                    var vidTitle = item.snippet.title;
+                    var vidTitle = parser.parseFromString(item.snippet.title, 'text/html').body.textContent;
+                    console.log(vidTitle);
                     var vidThumburl =  item.snippet.thumbnails.default.url;
                     var vidId = item.id.videoId;
                     results.push(new SearchResult(vidTitle, vidThumburl, vidId));
@@ -85,6 +87,7 @@ class Content extends React.Component {
                         <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
                     </div>
                     <div id="results">{searchresults}</div>
+                    <div class="neonBtn" onClick={() => this.setState({page : "home"})}>BACK</div>
                 </div>
             );
         } else if (this.state.page == "start2") {
@@ -106,6 +109,7 @@ class Content extends React.Component {
                         <div id="refresher" onClick={() => this.setState({page : "start"})}></div>
                     </div>
                     <div id="results">{searchresults}</div>
+                    <div class="neonBtn" onClick={() => this.setState({page : "home"})}>BACK</div>
                 </div>
             );
         } else if (this.state.page.includes("watch")) {

@@ -26,6 +26,7 @@ var Content = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (Content.__proto__ || Object.getPrototypeOf(Content)).call(this, props));
 
         _this.keyWordsearch = function () {
+            var parser = new DOMParser();
             gapi.client.setApiKey('AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE');
             gapi.client.load('youtube', 'v3', function () {
                 var q = $('#query').val();
@@ -38,7 +39,8 @@ var Content = function (_React$Component) {
                     results = [];
                     var srchItems = response.result.items;
                     $.each(srchItems, function (index, item) {
-                        var vidTitle = item.snippet.title;
+                        var vidTitle = parser.parseFromString(item.snippet.title, 'text/html').body.textContent;
+                        console.log(vidTitle);
                         var vidThumburl = item.snippet.thumbnails.default.url;
                         var vidId = item.id.videoId;
                         results.push(new SearchResult(vidTitle, vidThumburl, vidId));
@@ -241,6 +243,13 @@ var Content = function (_React$Component) {
                         'div',
                         { id: 'results' },
                         searchresults
+                    ),
+                    React.createElement(
+                        'div',
+                        { 'class': 'neonBtn', onClick: function onClick() {
+                                return _this2.setState({ page: "home" });
+                            } },
+                        'BACK'
                     )
                 );
             } else if (this.state.page == "start2") {
@@ -319,6 +328,13 @@ var Content = function (_React$Component) {
                         'div',
                         { id: 'results' },
                         searchresults
+                    ),
+                    React.createElement(
+                        'div',
+                        { 'class': 'neonBtn', onClick: function onClick() {
+                                return _this2.setState({ page: "home" });
+                            } },
+                        'BACK'
                     )
                 );
             } else if (this.state.page.includes("watch")) {
