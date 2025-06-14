@@ -1,8 +1,8 @@
-# Karaoke Project
+# Karaoke Unlimited
 
-<img src="https://img.shields.io/badge/-darkcyan?style=flat-square&logo=react&logoColor=white">
-<img src="https://img.shields.io/badge/-blue?style=flat-square&logo=jquery&logoColor=white">
-<img src="https://img.shields.io/badge/-yellow?style=flat-square&logo=babel&logoColor=white">
+<img src="https://img.shields.io/badge/-darkcyan?style=flat-square&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/-blue?style=flat-square&logo=jquery&logoColor=white"> <img src="https://img.shields.io/badge/-yellow?style=flat-square&logo=babel&logoColor=white">
+
+![Home Screen](assets/img/homescreen.png)
 
 Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!
 
