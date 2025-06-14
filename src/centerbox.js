@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 
-// Babel helper functions - should remain if not directly involved in JSX transformation
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -12,7 +11,6 @@ var selectedVidId;
 var results = [];
 var player = null;
 
-// This class seems to be a data structure, not a React component. No JSX needed.
 var SearchResult = function SearchResult(title, thumb, id) {
     _classCallCheck(this, SearchResult);
     this.title = title;
@@ -47,7 +45,7 @@ var Content = function (_React$Component) {
                         var vidId = item.id.videoId;
                         results.push(new SearchResult(vidTitle, vidThumburl, vidId));
                     });
-                    $('#refresher').click(); // This might need to trigger a state update if UI depends on `results`
+                    $('#refresher').click();
                 });
             });
         };
@@ -57,7 +55,7 @@ var Content = function (_React$Component) {
         };
 
         _this.state = { page: "home" };
-        _this.keyWordsearch = _this.keyWordsearch.bind(_this); // keyWordsearch binding is fine
+        _this.keyWordsearch = _this.keyWordsearch.bind(_this);
         return _this;
     }
 
@@ -107,14 +105,11 @@ var Content = function (_React$Component) {
                         </div>
                     </div>
                 );
-            } else if (this.state.page == "start" || this.state.page == "start2") { // Combined start and start2 as they are very similar
+            } else if (this.state.page == "start" || this.state.page == "start2") {
                 var searchresults = [];
-                // Loop for generating search results - this needs to be JSX
-                // The original _loop function created React.createElement calls.
-                // We will map results to JSX elements directly.
-                results.forEach(function(result) { // Changed from for...of to forEach for broader compatibility if Symbol.iterator is an issue
+                results.forEach(function(result) {
                     searchresults.push(
-                        <div onClick={() => _this2.setState({ page: "watch" + result.id })} className='searchresult' key={result.id}> {/* Added key prop */}
+                        <div onClick={() => _this2.setState({ page: "watch" + result.id })} className='searchresult' key={result.id}> {}
                             <img src={result.thumb} alt='No thumbnail available' />
                             <p style={{ marginLeft: "20px" }}>{result.title}</p>
                         </div>
@@ -137,7 +132,7 @@ var Content = function (_React$Component) {
                             {/* Refresher div to trigger re-render of search results list */}
                             <div id='refresher' onClick={() => _this2.setState({ page: nextPage })}></div>
                         </div>
-                        <div id='results'>
+                        <div id='results' style={{justifyContent: "center"}}>
                             {searchresults} {/* Render the array of JSX elements */}
                         </div>
                         <div className='neonBtn' onClick={() => _this2.setState({ page: "home" })}>
@@ -146,7 +141,7 @@ var Content = function (_React$Component) {
                     </div>
                 );
             } else if (this.state.page.includes("watch")) {
-                selectedVidId = this.state.page.substring(5); // This global var assignment is kept as is
+                selectedVidId = this.state.page.substring(5);
                 return (
                     <div className='centerbox'>
                         <div id='video' style={{ width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" }}></div>
@@ -175,7 +170,6 @@ var Content = function (_React$Component) {
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps, prevState) {
-            // This logic remains the same as it doesn't involve React.createElement
             if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
                 var _selectedVidId = this.state.page.substring(5);
                 if (window.YT && window.YT.Player) {
@@ -199,10 +193,8 @@ var Content = function (_React$Component) {
 }(React.Component);
 
 var domContainer = document.querySelector('#content');
-// Convert the final ReactDOM.render to use JSX
 ReactDOM.render(<Content />, domContainer);
 
-// This event listener remains the same
 document.addEventListener('keydown', function (e) {
     if (e.code === "Enter" && document.getElementById("searchbutton")) document.getElementById("searchbutton").click();
 });
