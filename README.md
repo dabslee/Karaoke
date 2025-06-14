@@ -1,6 +1,9 @@
 # Karaoke Unlimited
 
-<img src="https://img.shields.io/badge/-darkcyan?style=flat-square&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/-blue?style=flat-square&logo=jquery&logoColor=white"> <img src="https://img.shields.io/badge/-yellow?style=flat-square&logo=babel&logoColor=white">
+<img src="https://img.shields.io/badge/React-18.2.0-darkcyan?style=flat-square&logo=react&logoColor=white">
+<img src="https://img.shields.io/badge/jQuery-3.7.1-blue?style=flat-square&logo=jquery&logoColor=white">
+<img src="https://img.shields.io/badge/Babel-6.26.0-yellow?style=flat-square&logo=babel&logoColor=white">
+<img src="https://img.shields.io/badge/JSX-supported-orange?style=flat-square&logo=react&logoColor=white">
 
 ![Home Screen](assets/img/homescreen.png)
 
