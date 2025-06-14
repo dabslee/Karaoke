@@ -8,6 +8,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var selectedVidId;
 var results = [];
+var player = null;
 
 var SearchResult = function SearchResult(title, thumb, id) {
     _classCallCheck(this, SearchResult);
@@ -48,6 +49,10 @@ var Content = function (_React$Component) {
                     $('#refresher').click();
                 });
             });
+        };
+
+        _this.handleBegin = function () {
+            if (player && player.playVideo) player.playVideo();
         };
 
         _this.state = { page: "home" };
@@ -145,17 +150,17 @@ var Content = function (_React$Component) {
                     React.createElement(
                         'p',
                         { style: { textAlign: "left", width: "25%" } },
-                        '© ' + new Date().getFullYear() + ' Brandon Lee.',
+                        '\xA9 2025 Brandon Lee.',
                         React.createElement('br', null),
                         React.createElement(
                             'a',
-                            { href: 'https://github.com/dabslee/Karaoke' },
+                            { href: 'github.com/dabslee/Karaoke' },
                             'Source code'
                         ),
                         ' \u2022 ',
                         React.createElement(
                             'a',
-                            { href: 'https://brandonssandbox.com' },
+                            { href: 'brandonssandbox.com' },
                             'Brandon\'s Website'
                         )
                     ),
@@ -339,31 +344,55 @@ var Content = function (_React$Component) {
                 );
             } else if (this.state.page.includes("watch")) {
                 selectedVidId = this.state.page.substring(5);
-                var link = "http://www.youtube.com/embed/" + selectedVidId + "?enablejsapi=1&disablekb=1&controls=0";
                 return React.createElement(
                     'div',
                     { 'class': 'centerbox' },
-                    React.createElement('iframe', { id: 'video', width: '80%', height: '80%', style: { pointerEvents: "none" },
-                        src: link }),
+                    React.createElement('div', { id: 'video', style: { width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" } }),
                     React.createElement(
                         'div',
                         { style: { display: "flex", flexDirection: "row" } },
                         React.createElement(
                             'div',
-                            { 'class': 'neonBtn', onClick: function onClick() {
-                                    return _this2.setState({ page: "start" });
-                                } },
+                            {
+                                'class': 'neonBtn',
+                                onClick: function onClick() {
+                                    // Destroy player and clear video when leaving "watch"
+                                    if (player) {
+                                        player.destroy();
+                                        player = null;
+                                    }
+                                    _this2.setState({ page: "start" });
+                                }
+                            },
                             'BACK'
                         ),
                         React.createElement(
                             'div',
-                            { id: 'begin-button', 'class': 'neonBtn', onClick: function onClick() {
-                                    return $('#video')[0].contentWindow.postMessage('{"event":"command","func":"' + 'playVideo' + '","args":""}', '*');
-                                } },
+                            { id: 'begin-button', 'class': 'neonBtn', onClick: this.handleBegin },
                             'BEGIN'
                         )
                     )
                 );
+            }
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
+                var _selectedVidId = this.state.page.substring(5);
+                if (window.YT && window.YT.Player) {
+                    if (player) player.destroy();
+                    player = new window.YT.Player('video', {
+                        videoId: _selectedVidId,
+                        width: '80%',
+                        playerVars: {
+                            'autoplay': 0,
+                            'controls': 0,
+                            'disablekb': 1,
+                            'enablejsapi': 1
+                        }
+                    });
+                }
             }
         }
     }]);
