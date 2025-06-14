@@ -30051,21 +30051,22 @@
           "div",
           {
             id: "begin-button",
-            className: "neonBtn",
+            className: `neonBtn ${this.state.beginButtonDisabled ? "disabled-look" : ""}`,
             onClick: () => {
+              if (this.state.beginButtonDisabled) return;
               this.handleBegin();
               this.handleStartRecording();
               this.setState({ beginButtonDisabled: true, finishButtonDisabled: false });
-            },
-            disabled: this.state.beginButtonDisabled
+            }
           },
           this.state.isRecording ? "Recording..." : "BEGIN"
         ), /* @__PURE__ */ import_react.default.createElement(
           "div",
           {
             id: "finish-button",
-            className: "neonBtn",
+            className: `neonBtn ${this.state.finishButtonDisabled ? "disabled-look" : ""}`,
             onClick: () => {
+              if (this.state.finishButtonDisabled) return;
               if (player) {
                 player.destroy();
                 player = null;
@@ -30076,8 +30077,7 @@
                 beginButtonDisabled: false,
                 finishButtonDisabled: true
               });
-            },
-            disabled: this.state.finishButtonDisabled
+            }
           },
           "Finish"
         )));

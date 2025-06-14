@@ -46,11 +46,15 @@ a:hover {
     text-align: center;
     margin: 10px;
 }
-.neonBtn:hover {
+.neonBtn:hover:not(.disabled-look) {
     color: #fee;
     text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #53ff28, 0 0 0.5em #53ff28, 0 0 0.1em #53ff28, 0 10px 3px #000;
     border-color: #fee;
     box-shadow: 0 -10px 70px rgba(255,255,255,0.3), 0 0 2px, 0 0 1em #53ff28, inset 0 0 0.5em #53ff28, 0 10px 3px #000;
+}
+.neonBtn.disabled-look {
+  opacity: 0.25;
+  cursor: not-allowed;
 }
 
 input {

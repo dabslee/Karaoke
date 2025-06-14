@@ -203,20 +203,21 @@ class Content extends React.Component {
                         </div>
                         <div
                             id="begin-button"
-                            className="neonBtn"
+                            className={`neonBtn ${this.state.beginButtonDisabled ? 'disabled-look' : ''}`}
                             onClick={() => {
+                                if (this.state.beginButtonDisabled) return;
                                 this.handleBegin(); 
                                 this.handleStartRecording();
                                 this.setState({ beginButtonDisabled: true, finishButtonDisabled: false });
                             }}
-                            disabled={this.state.beginButtonDisabled}
                         >
                             {this.state.isRecording ? 'Recording...' : 'BEGIN'}
                         </div>
                         <div
                             id="finish-button"
-                            className="neonBtn"
+                            className={`neonBtn ${this.state.finishButtonDisabled ? 'disabled-look' : ''}`}
                             onClick={() => {
+                                if (this.state.finishButtonDisabled) return;
                                 if (player) {
                                     player.destroy();
                                     player = null; 
@@ -228,7 +229,6 @@ class Content extends React.Component {
                                     finishButtonDisabled: true
                                 });
                             }}
-                            disabled={this.state.finishButtonDisabled}
                         >
                             Finish
                         </div>
