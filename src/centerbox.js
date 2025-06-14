@@ -83,7 +83,7 @@ class Content extends React.Component {
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginTop:"10%"}}>
                     <div class="logo2" style={{fontWeight:"thin"}}><b>Search for a song:</b></div>
                     <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:"30px"}}>
-                        <input id="query" placeholder="e.g. Never Gonna Give You Up"></input>
+                        <input id="query" placeholder="e.g. Never Gonna Give You Up" style={{width: '80%'}}></input>
                         <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
                         <div id="refresher" onClick={() => this.setState({page : "start2"})}></div>
                     </div>
@@ -105,7 +105,7 @@ class Content extends React.Component {
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginTop:"10%"}}>
                     <div class="logo2" style={{fontWeight:"thin"}}><b>Search for a song:</b></div>
                     <div style={{width:"100%", display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:"30px"}}>
-                        <input id="query" placeholder="e.g. Never Gonna Give You Up"></input>
+                        <input id="query" placeholder="e.g. Never Gonna Give You Up" style={{width: '80%'}}></input>
                         <div id="searchbutton" class="logo2" onClick={this.keyWordsearch} style={{cursor:"pointer", margin:0}}><b>➜</b></div>
                         <div id="refresher" onClick={() => this.setState({page : "start"})}></div>
                     </div>

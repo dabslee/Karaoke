@@ -230,7 +230,7 @@ var Content = function (_React$Component) {
                     React.createElement(
                         'div',
                         { style: { width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" } },
-                        React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up' }),
+                        React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up', style: { width: '80%' } }),
                         React.createElement(
                             'div',
                             { id: 'searchbutton', 'class': 'logo2', onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } },
@@ -315,7 +315,7 @@ var Content = function (_React$Component) {
                     React.createElement(
                         'div',
                         { style: { width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" } },
-                        React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up' }),
+                        React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up', style: { width: '80%' } }),
                         React.createElement(
                             'div',
                             { id: 'searchbutton', 'class': 'logo2', onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } },
