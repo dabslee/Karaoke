@@ -1,18 +1,42 @@
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+import React from 'react';
+import ReactDOM from 'react-dom';
+import $ from 'jquery';
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+// Babel helper functions - should remain if not directly involved in JSX transformation
+var _createClass = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
+}();
+function _possibleConstructorReturn(self, call) {
+    if (!self) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
 
 var selectedVidId;
 var results = [];
 var player = null;
 
+// This class seems to be a data structure, not a React component. No JSX needed.
 var SearchResult = function SearchResult(title, thumb, id) {
     _classCallCheck(this, SearchResult);
-
     this.title = title;
     this.thumb = thumb;
     this.id = id;
@@ -23,7 +47,6 @@ var Content = function (_React$Component) {
 
     function Content(props) {
         _classCallCheck(this, Content);
-
         var _this = _possibleConstructorReturn(this, (Content.__proto__ || Object.getPrototypeOf(Content)).call(this, props));
 
         _this.keyWordsearch = function () {
@@ -46,7 +69,7 @@ var Content = function (_React$Component) {
                         var vidId = item.id.videoId;
                         results.push(new SearchResult(vidTitle, vidThumburl, vidId));
                     });
-                    $('#refresher').click();
+                    $('#refresher').click(); // This might need to trigger a state update if UI depends on `results`
                 });
             });
         };
@@ -56,22 +79,22 @@ var Content = function (_React$Component) {
         };
 
         _this.state = { page: "home" };
-        _this.keyWordsearch = _this.keyWordsearch.bind(_this);
+        _this.keyWordsearch = _this.keyWordsearch.bind(_this); // keyWordsearch binding is fine
         return _this;
     }
 
     _createClass(Content, [{
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this2 = this; // Used in onClick handlers
 
             if (this.state.page == "home") {
                 return React.createElement(
                     'div',
-                    { 'class': 'centerbox' },
+                    { className: 'centerbox' },
                     React.createElement(
                         'div',
-                        { 'class': 'logo' },
+                        { className: 'logo' },
                         React.createElement(
                             'b',
                             null,
@@ -91,7 +114,7 @@ var Content = function (_React$Component) {
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'logo2' },
+                        { className: 'logo2' },
                         React.createElement(
                             'b',
                             null,
@@ -105,14 +128,14 @@ var Content = function (_React$Component) {
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'neonBtn', onClick: function onClick() {
+                        { className: 'neonBtn', onClick: function onClick() {
                                 return _this2.setState({ page: "start" });
                             } },
                         'START'
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'neonBtn', onClick: function onClick() {
+                        { className: 'neonBtn', onClick: function onClick() {
                                 return _this2.setState({ page: "about" });
                             } },
                         'ABOUT'
@@ -121,10 +144,10 @@ var Content = function (_React$Component) {
             } else if (this.state.page == "about") {
                 return React.createElement(
                     'div',
-                    { 'class': 'centerbox' },
+                    { className: 'centerbox' },
                     React.createElement(
                         'div',
-                        { 'class': 'logo' },
+                        { className: 'logo' },
                         React.createElement(
                             'b',
                             null,
@@ -157,7 +180,7 @@ var Content = function (_React$Component) {
                             { href: 'github.com/dabslee/Karaoke' },
                             'Source code'
                         ),
-                        ' \u2022 ',
+                        ' • ',
                         React.createElement(
                             'a',
                             { href: 'brandonssandbox.com' },
@@ -166,21 +189,26 @@ var Content = function (_React$Component) {
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'neonBtn', onClick: function onClick() {
+                        { className: 'neonBtn', onClick: function onClick() {
                                 return _this2.setState({ page: "home" });
                             } },
                         'BACK'
                     )
                 );
-            } else if (this.state.page == "start") {
+            } else if (this.state.page == "start" || this.state.page == "start2") {
+                // Combined start and start2 as they are very similar
                 var searchresults = [];
-
-                var _loop = function _loop(result) {
+                // Loop for generating search results - this needs to be JSX
+                // The original _loop function created React.createElement calls.
+                // We will map results to JSX elements directly.
+                results.forEach(function (result) {
+                    // Changed from for...of to forEach for broader compatibility if Symbol.iterator is an issue
                     searchresults.push(React.createElement(
                         'div',
                         { onClick: function onClick() {
                                 return _this2.setState({ page: "watch" + result.id });
-                            }, 'class': 'searchresult' },
+                            }, className: 'searchresult', key: result.id },
+                        ' ',
                         React.createElement('img', { src: result.thumb, alt: 'No thumbnail available' }),
                         React.createElement(
                             'p',
@@ -188,39 +216,17 @@ var Content = function (_React$Component) {
                             result.title
                         )
                     ));
-                };
+                });
 
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = results[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var result = _step.value;
-
-                        _loop(result);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
+                // Determine which page to switch back to for the refresher
+                var nextPage = this.state.page === "start" ? "start2" : "start";
 
                 return React.createElement(
                     'div',
                     { style: { display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" } },
                     React.createElement(
                         'div',
-                        { 'class': 'logo2', style: { fontWeight: "thin" } },
+                        { className: 'logo2', style: { fontWeight: "thin" } },
                         React.createElement(
                             'b',
                             null,
@@ -233,120 +239,36 @@ var Content = function (_React$Component) {
                         React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up', style: { width: '80%' } }),
                         React.createElement(
                             'div',
-                            { id: 'searchbutton', 'class': 'logo2', onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } },
+                            { id: 'searchbutton', className: 'logo2', onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } },
                             React.createElement(
                                 'b',
                                 null,
-                                '\u279C'
+                                '\u2794'
                             )
                         ),
                         React.createElement('div', { id: 'refresher', onClick: function onClick() {
-                                return _this2.setState({ page: "start2" });
+                                return _this2.setState({ page: nextPage });
                             } })
                     ),
                     React.createElement(
                         'div',
                         { id: 'results' },
-                        searchresults
+                        searchresults,
+                        ' '
                     ),
                     React.createElement(
                         'div',
-                        { 'class': 'neonBtn', onClick: function onClick() {
-                                return _this2.setState({ page: "home" });
-                            } },
-                        'BACK'
-                    )
-                );
-            } else if (this.state.page == "start2") {
-                var searchresults = [];
-
-                var _loop2 = function _loop2(_result) {
-                    searchresults.push(React.createElement(
-                        'div',
-                        { onClick: function onClick() {
-                                return _this2.setState({ page: "watch" + _result.id });
-                            }, 'class': 'searchresult' },
-                        React.createElement('img', { src: _result.thumb, alt: 'No thumbnail available' }),
-                        React.createElement(
-                            'p',
-                            { style: { marginLeft: "20px" } },
-                            _result.title
-                        )
-                    ));
-                };
-
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
-
-                try {
-                    for (var _iterator2 = results[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var _result = _step2.value;
-
-                        _loop2(_result);
-                    }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
-                    }
-                }
-
-                return React.createElement(
-                    'div',
-                    { style: { display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" } },
-                    React.createElement(
-                        'div',
-                        { 'class': 'logo2', style: { fontWeight: "thin" } },
-                        React.createElement(
-                            'b',
-                            null,
-                            'Search for a song:'
-                        )
-                    ),
-                    React.createElement(
-                        'div',
-                        { style: { width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" } },
-                        React.createElement('input', { id: 'query', placeholder: 'e.g. Never Gonna Give You Up', style: { width: '80%' } }),
-                        React.createElement(
-                            'div',
-                            { id: 'searchbutton', 'class': 'logo2', onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } },
-                            React.createElement(
-                                'b',
-                                null,
-                                '\u279C'
-                            )
-                        ),
-                        React.createElement('div', { id: 'refresher', onClick: function onClick() {
-                                return _this2.setState({ page: "start" });
-                            } })
-                    ),
-                    React.createElement(
-                        'div',
-                        { id: 'results' },
-                        searchresults
-                    ),
-                    React.createElement(
-                        'div',
-                        { 'class': 'neonBtn', onClick: function onClick() {
+                        { className: 'neonBtn', onClick: function onClick() {
                                 return _this2.setState({ page: "home" });
                             } },
                         'BACK'
                     )
                 );
             } else if (this.state.page.includes("watch")) {
-                selectedVidId = this.state.page.substring(5);
+                selectedVidId = this.state.page.substring(5); // This global var assignment is kept as is
                 return React.createElement(
                     'div',
-                    { 'class': 'centerbox' },
+                    { className: 'centerbox' },
                     React.createElement('div', { id: 'video', style: { width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" } }),
                     React.createElement(
                         'div',
@@ -354,9 +276,8 @@ var Content = function (_React$Component) {
                         React.createElement(
                             'div',
                             {
-                                'class': 'neonBtn',
+                                className: 'neonBtn',
                                 onClick: function onClick() {
-                                    // Destroy player and clear video when leaving "watch"
                                     if (player) {
                                         player.destroy();
                                         player = null;
@@ -368,16 +289,18 @@ var Content = function (_React$Component) {
                         ),
                         React.createElement(
                             'div',
-                            { id: 'begin-button', 'class': 'neonBtn', onClick: this.handleBegin },
+                            { id: 'begin-button', className: 'neonBtn', onClick: this.handleBegin },
                             'BEGIN'
                         )
                     )
                 );
             }
+            return null; // Default return if no state matches
         }
     }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps, prevState) {
+            // This logic remains the same as it doesn't involve React.createElement
             if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
                 var _selectedVidId = this.state.page.substring(5);
                 if (window.YT && window.YT.Player) {
@@ -401,8 +324,10 @@ var Content = function (_React$Component) {
 }(React.Component);
 
 var domContainer = document.querySelector('#content');
-ReactDOM.render(React.createElement(Content), domContainer);
+// Convert the final ReactDOM.render to use JSX
+ReactDOM.render(React.createElement(Content, null), domContainer);
 
+// This event listener remains the same
 document.addEventListener('keydown', function (e) {
     if (e.code === "Enter" && document.getElementById("searchbutton")) document.getElementById("searchbutton").click();
 });

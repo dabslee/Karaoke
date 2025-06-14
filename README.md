@@ -19,9 +19,8 @@ To begin using KU, simply navigate back to the main screen and then press "START
 2. **Build the project:**
    In the same terminal, run the following script. This will watch for changes in the `src` directory and output the built files into the project's root directory.
    ```bash
-   ./babelrun.sh
+   npm run build
    ```
-   (If you are on Windows, you might need to run it using a bash-like shell like Git Bash, or execute the command within `babelrun.sh` directly: `npx babel --watch src --out-dir . --presets react-app/prod`)
 
 3. **Serve the application:**
    To avoid potential CORS (Cross-Origin Resource Sharing) errors when running the application directly from the file system, it's best to serve it using a local HTTP server.
@@ -29,10 +28,7 @@ To begin using KU, simply navigate back to the main screen and then press "START
    **Using Python's built-in server (if you have Python installed):**
    Navigate to the project's root directory in your terminal and run:
    ```bash
-   # For Python 3
    python -m http.server
-   # For Python 2
-   python -m SimpleHTTPServer
    ```
    This will typically serve the project at `http://localhost:8000/`.
 

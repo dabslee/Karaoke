@@ -1,10 +1,11 @@
 {
   "name": "karaoke",
   "version": "1.0.0",
-  "description": "",
+  "description": "<img src=\"https://img.shields.io/badge/-darkcyan?style=flat-square&logo=react&logoColor=white\"> <img src=\"https://img.shields.io/badge/-blue?style=flat-square&logo=jquery&logoColor=white\"> <img src=\"https://img.shields.io/badge/-yellow?style=flat-square&logo=babel&logoColor=white\">",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/centerbox.js --bundle --outfile=./centerbox.bundle.js --loader:.js=jsx --jsx-factory=React.createElement --jsx-fragment=React.Fragment"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,11 @@
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^3.1.2",
-    "react-native-expo-viewport-units": "0.0.8",
-    "react-native-viewport-units": "0.0.5"
+    "jquery": "^3.7.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5"
   }
 }
