@@ -145,17 +145,17 @@ var Content = function (_React$Component) {
                     React.createElement(
                         'p',
                         { style: { textAlign: "left", width: "25%" } },
-                        'KU was made in May 2021 by Brandon Lee.',
+                        '© ' + new Date().getFullYear() + ' Brandon Lee.',
                         React.createElement('br', null),
                         React.createElement(
                             'a',
-                            { href: 'github.com/dabslee/Karaoke' },
+                            { href: 'https://github.com/dabslee/Karaoke' },
                             'Source code'
                         ),
                         ' \u2022 ',
                         React.createElement(
                             'a',
-                            { href: 'brandonssandbox.com' },
+                            { href: 'https://brandonssandbox.com' },
                             'Brandon\'s Website'
                         )
                     ),

@@ -11,5 +11,11 @@
 <body>
     <div id="content"></div>
     <script type="module" src="centerbox.js"></script>
-	<div id="footertext">&copy; <a href="http://brandonssandbox.com/">Brandon Lee</a> 2021</div>
+	<div id="footertext">
+        &copy;
+        <a href="http://brandonssandbox.com/">Brandon Lee</a>
+        <span id="copyright">
+            <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))</script>
+        </span>
+    </div>
 </body>
