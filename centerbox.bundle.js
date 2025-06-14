@@ -29904,146 +29904,204 @@
   var import_react = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
   var import_jquery = __toESM(require_jquery());
-  var _createClass = /* @__PURE__ */ function() {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
-    }
-    return function(Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  }();
-  function _possibleConstructorReturn(self, call) {
-    if (!self) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return call && (typeof call === "object" || typeof call === "function") ? call : self;
-  }
-  function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-  }
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
   var selectedVidId;
   var results = [];
   var player = null;
-  var SearchResult = function SearchResult2(title, thumb, id) {
-    _classCallCheck(this, SearchResult2);
-    this.title = title;
-    this.thumb = thumb;
-    this.id = id;
-  };
-  var Content = function(_React$Component) {
-    _inherits(Content2, _React$Component);
-    function Content2(props) {
-      _classCallCheck(this, Content2);
-      var _this = _possibleConstructorReturn(this, (Content2.__proto__ || Object.getPrototypeOf(Content2)).call(this, props));
-      _this.keyWordsearch = function() {
-        var parser = new DOMParser();
-        gapi.client.setApiKey("AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE");
-        gapi.client.load("youtube", "v3", function() {
-          var q = (0, import_jquery.default)("#query").val();
-          var request = gapi.client.youtube.search.list({
-            q,
-            part: "snippet",
-            maxResults: 10
-          });
-          request.execute(function(response) {
-            results = [];
-            var srchItems = response.result.items;
-            import_jquery.default.each(srchItems, function(index, item) {
-              var vidTitle = parser.parseFromString(item.snippet.title, "text/html").body.textContent;
-              console.log(vidTitle);
-              var vidThumburl = item.snippet.thumbnails.default.url;
-              var vidId = item.id.videoId;
-              results.push(new SearchResult(vidTitle, vidThumburl, vidId));
-            });
-            (0, import_jquery.default)("#refresher").click();
-          });
-        });
-      };
-      _this.handleBegin = function() {
-        if (player && player.playVideo) player.playVideo();
-      };
-      _this.state = { page: "home" };
-      _this.keyWordsearch = _this.keyWordsearch.bind(_this);
-      return _this;
+  var SearchResult = class {
+    constructor(title, thumb, id) {
+      this.title = title;
+      this.thumb = thumb;
+      this.id = id;
     }
-    _createClass(Content2, [{
-      key: "render",
-      value: function render() {
-        var _this2 = this;
-        if (this.state.page == "home") {
-          return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Kar", /* @__PURE__ */ import_react.default.createElement("span", null, "a"), "ok", /* @__PURE__ */ import_react.default.createElement("span", null, "e"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "UNLIMITE", /* @__PURE__ */ import_react.default.createElement("span", null, "D"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => _this2.setState({ page: "start" }) }, "START"), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => _this2.setState({ page: "about" }) }, "ABOUT"));
-        } else if (this.state.page == "about") {
-          return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo" }, /* @__PURE__ */ import_react.default.createElement("b", null, "A", /* @__PURE__ */ import_react.default.createElement("span", null, "b"), "out")), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, "Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!"), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, `To begin using KU, simply navigate back to the main screen and then press "START." Then, enter the link of the YouTube video you want to use on the screen that pops up. KU will then display the video on screen, and whenever you're ready, you can press the record button to begin singing! Once done, simply tap the record button again to finish and receive your score.`), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, "\xA9 2025 Brandon Lee.", /* @__PURE__ */ import_react.default.createElement("br", null), /* @__PURE__ */ import_react.default.createElement("a", { href: "github.com/dabslee/Karaoke" }, "Source code"), " \u2022 ", /* @__PURE__ */ import_react.default.createElement("a", { href: "brandonssandbox.com" }, "Brandon's Website")), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => _this2.setState({ page: "home" }) }, "BACK"));
-        } else if (this.state.page == "start" || this.state.page == "start2") {
-          var searchresults = [];
-          results.forEach(function(result) {
-            searchresults.push(
-              /* @__PURE__ */ import_react.default.createElement("div", { onClick: () => _this2.setState({ page: "watch" + result.id }), className: "searchresult", key: result.id }, " ", /* @__PURE__ */ import_react.default.createElement("img", { src: result.thumb, alt: "No thumbnail available" }), /* @__PURE__ */ import_react.default.createElement("p", { style: { marginLeft: "20px" } }, result.title))
-            );
+  };
+  var Content = class extends import_react.default.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        page: "home",
+        isRecording: false,
+        audioBlob: null,
+        beginButtonDisabled: false,
+        finishButtonDisabled: true
+      };
+      this.mediaRecorder = null;
+      this.audioChunks = [];
+      this.keyWordsearch = this.keyWordsearch.bind(this);
+      this.handleBegin = this.handleBegin.bind(this);
+      this.handleStartRecording = this.handleStartRecording.bind(this);
+      this.handleStopRecording = this.handleStopRecording.bind(this);
+    }
+    keyWordsearch() {
+      var parser = new DOMParser();
+      gapi.client.setApiKey("AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE");
+      gapi.client.load("youtube", "v3", () => {
+        var q = (0, import_jquery.default)("#query").val();
+        var request = gapi.client.youtube.search.list({
+          q,
+          part: "snippet",
+          maxResults: 10,
+          type: "video"
+        });
+        request.execute((response) => {
+          results = [];
+          var srchItems = response.result.items;
+          import_jquery.default.each(srchItems, (index, item) => {
+            var vidTitle = parser.parseFromString(item.snippet.title, "text/html").body.textContent;
+            var vidThumburl = item.snippet.thumbnails.default.url;
+            var vidId = item.id.videoId;
+            results.push(new SearchResult(vidTitle, vidThumburl, vidId));
           });
-          const nextPage = this.state.page === "start" ? "start2" : "start";
-          return /* @__PURE__ */ import_react.default.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" } }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2", style: { fontWeight: "thin" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Search for a song:")), /* @__PURE__ */ import_react.default.createElement("div", { style: { width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" } }, /* @__PURE__ */ import_react.default.createElement("input", { id: "query", placeholder: "e.g. Never Gonna Give You Up", style: { width: "80%" } }), /* @__PURE__ */ import_react.default.createElement("div", { id: "searchbutton", className: "logo2", onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } }, /* @__PURE__ */ import_react.default.createElement("b", null, "\u2794")), /* @__PURE__ */ import_react.default.createElement("div", { id: "refresher", onClick: () => _this2.setState({ page: nextPage }) })), /* @__PURE__ */ import_react.default.createElement("div", { id: "results", style: { justifyContent: "center" } }, searchresults, " "), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => _this2.setState({ page: "home" }) }, "BACK"));
-        } else if (this.state.page.includes("watch")) {
-          selectedVidId = this.state.page.substring(5);
-          return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { id: "video", style: { width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" } }), /* @__PURE__ */ import_react.default.createElement("div", { style: { display: "flex", flexDirection: "row" } }, /* @__PURE__ */ import_react.default.createElement(
-            "div",
-            {
-              className: "neonBtn",
-              onClick: () => {
-                if (player) {
-                  player.destroy();
-                  player = null;
-                }
-                _this2.setState({ page: "start" });
-              }
-            },
-            "BACK"
-          ), /* @__PURE__ */ import_react.default.createElement("div", { id: "begin-button", className: "neonBtn", onClick: this.handleBegin }, "BEGIN")));
-        }
-        return null;
+          (0, import_jquery.default)("#refresher").click();
+        });
+      });
+    }
+    handleBegin() {
+      if (player && player.playVideo) {
+        player.playVideo();
       }
-    }, {
-      key: "componentDidUpdate",
-      value: function componentDidUpdate(prevProps, prevState) {
-        if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
-          var _selectedVidId = this.state.page.substring(5);
-          if (window.YT && window.YT.Player) {
-            if (player) player.destroy();
-            player = new window.YT.Player("video", {
-              videoId: _selectedVidId,
-              width: "80%",
-              playerVars: {
-                "autoplay": 0,
-                "controls": 0,
-                "disablekb": 1,
-                "enablejsapi": 1
-              }
-            });
+    }
+    handleStartRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        this.mediaRecorder = new MediaRecorder(stream);
+        this.mediaRecorder.ondataavailable = (event) => {
+          this.audioChunks.push(event.data);
+        };
+        this.mediaRecorder.onstop = () => {
+          this.setState({ audioBlob: new Blob(this.audioChunks, { type: "audio/webm" }) });
+          this.audioChunks = [];
+        };
+        this.mediaRecorder.start();
+        this.setState({ isRecording: true });
+      }).catch((err) => {
+        console.error("Error accessing microphone:", err);
+      });
+    }
+    handleStopRecording() {
+      if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+        this.mediaRecorder.stop();
+        this.setState({ isRecording: false });
+      }
+    }
+    componentDidUpdate(prevProps, prevState) {
+      if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
+        selectedVidId = this.state.page.substring(5);
+        if (window.YT && window.YT.Player) {
+          if (player) {
+            player.destroy();
           }
+          player = new window.YT.Player("video", {
+            videoId: selectedVidId,
+            width: "80%",
+            playerVars: {
+              "autoplay": 0,
+              "controls": 0,
+              "disablekb": 1,
+              "enablejsapi": 1,
+              "rel": 0
+            }
+          });
         }
       }
-    }]);
-    return Content2;
-  }(import_react.default.Component);
+    }
+    componentWillUnmount() {
+      if (this.state.audioBlob) {
+        URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
+      }
+      if (player) {
+        player.destroy();
+        player = null;
+      }
+      if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+        this.mediaRecorder.stop();
+      }
+    }
+    render() {
+      if (this.state.page == "home") {
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Kar", /* @__PURE__ */ import_react.default.createElement("span", null, "a"), "ok", /* @__PURE__ */ import_react.default.createElement("span", null, "e"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "UNLIMITE", /* @__PURE__ */ import_react.default.createElement("span", null, "D"))), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => this.setState({ page: "start" }) }, "START"), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => this.setState({ page: "about" }) }, "ABOUT"));
+      } else if (this.state.page == "about") {
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo" }, /* @__PURE__ */ import_react.default.createElement("b", null, "A", /* @__PURE__ */ import_react.default.createElement("span", null, "b"), "out")), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, "Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!"), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, `To begin using KU, simply navigate back to the main screen and then press "START." Then, enter the link of the YouTube video you want to use on the screen that pops up. KU will then display the video on screen, and whenever you're ready, you can press the record button to begin singing! Once done, simply tap the record button again to finish and receive your score.`), /* @__PURE__ */ import_react.default.createElement("p", { style: { textAlign: "left", width: "25%" } }, "\xA9 2025 Brandon Lee.", /* @__PURE__ */ import_react.default.createElement("br", null), /* @__PURE__ */ import_react.default.createElement("a", { href: "https://github.com/dabslee/Karaoke" }, "Source code"), " \u2022 ", /* @__PURE__ */ import_react.default.createElement("a", { href: "https://brandonssandbox.com" }, "Brandon's Website")), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => this.setState({ page: "home" }) }, "BACK"));
+      } else if (this.state.page == "start" || this.state.page == "start2") {
+        const nextPage = this.state.page === "start" ? "start2" : "start";
+        return /* @__PURE__ */ import_react.default.createElement("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" } }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2", style: { fontWeight: "thin" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Search for a song:")), /* @__PURE__ */ import_react.default.createElement("div", { style: { width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" } }, /* @__PURE__ */ import_react.default.createElement("input", { id: "query", placeholder: "e.g. Never Gonna Give You Up", style: { width: "80%" } }), /* @__PURE__ */ import_react.default.createElement("div", { id: "searchbutton", className: "logo2", onClick: this.keyWordsearch, style: { cursor: "pointer", margin: 0 } }, /* @__PURE__ */ import_react.default.createElement("b", null, "\u2794")), /* @__PURE__ */ import_react.default.createElement("div", { id: "refresher", onClick: () => this.setState({ page: nextPage }) })), /* @__PURE__ */ import_react.default.createElement("div", { id: "results", style: { justifyContent: "center" } }, results.map((result) => /* @__PURE__ */ import_react.default.createElement("div", { onClick: () => this.setState({ page: "watch" + result.id }), className: "searchresult", key: result.id }, /* @__PURE__ */ import_react.default.createElement("img", { src: result.thumb, alt: "No thumbnail available" }), /* @__PURE__ */ import_react.default.createElement("p", { style: { marginLeft: "20px" } }, result.title))), " "), /* @__PURE__ */ import_react.default.createElement("div", { className: "neonBtn", onClick: () => this.setState({ page: "home" }) }, "BACK"));
+      } else if (this.state.page.includes("watch")) {
+        selectedVidId = this.state.page.substring(5);
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { id: "video", style: { width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" } }), /* @__PURE__ */ import_react.default.createElement("div", { style: { display: "flex", flexDirection: "row" } }, /* @__PURE__ */ import_react.default.createElement(
+          "div",
+          {
+            className: "neonBtn",
+            onClick: () => {
+              if (player) {
+                player.destroy();
+                player = null;
+              }
+              if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+                this.mediaRecorder.stop();
+              }
+              this.setState({
+                page: "start",
+                isRecording: false,
+                beginButtonDisabled: false,
+                finishButtonDisabled: true,
+                audioBlob: null
+              });
+            }
+          },
+          "BACK"
+        ), /* @__PURE__ */ import_react.default.createElement(
+          "div",
+          {
+            id: "begin-button",
+            className: "neonBtn",
+            onClick: () => {
+              this.handleBegin();
+              this.handleStartRecording();
+              this.setState({ beginButtonDisabled: true, finishButtonDisabled: false });
+            },
+            disabled: this.state.beginButtonDisabled
+          },
+          this.state.isRecording ? "Recording..." : "BEGIN"
+        ), /* @__PURE__ */ import_react.default.createElement(
+          "div",
+          {
+            id: "finish-button",
+            className: "neonBtn",
+            onClick: () => {
+              if (player) {
+                player.destroy();
+                player = null;
+              }
+              this.handleStopRecording();
+              this.setState({
+                page: "score",
+                beginButtonDisabled: false,
+                finishButtonDisabled: true
+              });
+            },
+            disabled: this.state.finishButtonDisabled
+          },
+          "Finish"
+        )));
+      } else if (this.state.page === "score") {
+        const currentVideoId = selectedVidId || "";
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("h1", null, "Listen to your recording"), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob) }), /* @__PURE__ */ import_react.default.createElement(
+          "div",
+          {
+            className: "neonBtn",
+            onClick: () => {
+              if (this.state.audioBlob) {
+                URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
+              }
+              this.setState({ page: "watch" + currentVideoId, audioBlob: null });
+            }
+          },
+          "Back to Watch Page"
+        ));
+      }
+      return null;
+    }
+  };
   var domContainer = document.querySelector("#content");
-  import_react_dom.default.render(/* @__PURE__ */ import_react.default.createElement(Content, null), domContainer);
+  import_react_dom.default.render(import_react.default.createElement(Content, null), domContainer);
   document.addEventListener("keydown", function(e) {
     if (e.code === "Enter" && document.getElementById("searchbutton")) document.getElementById("searchbutton").click();
   });

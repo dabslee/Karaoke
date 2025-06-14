@@ -2,198 +2,267 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var selectedVidId;
 var results = [];
 var player = null;
 
-var SearchResult = function SearchResult(title, thumb, id) {
-    _classCallCheck(this, SearchResult);
-    this.title = title;
-    this.thumb = thumb;
-    this.id = id;
-};
+class SearchResult {
+    constructor(title, thumb, id) {
+        this.title = title;
+        this.thumb = thumb;
+        this.id = id;
+    }
+}
 
-var Content = function (_React$Component) {
-    _inherits(Content, _React$Component);
-
-    function Content(props) {
-        _classCallCheck(this, Content);
-        var _this = _possibleConstructorReturn(this, (Content.__proto__ || Object.getPrototypeOf(Content)).call(this, props));
-
-        _this.keyWordsearch = function () {
-            var parser = new DOMParser();
-            gapi.client.setApiKey('AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE');
-            gapi.client.load('youtube', 'v3', function () {
-                var q = $('#query').val();
-                var request = gapi.client.youtube.search.list({
-                    q: q,
-                    part: 'snippet',
-                    maxResults: 10
-                });
-                request.execute(function (response) {
-                    results = [];
-                    var srchItems = response.result.items;
-                    $.each(srchItems, function (index, item) {
-                        var vidTitle = parser.parseFromString(item.snippet.title, 'text/html').body.textContent;
-                        console.log(vidTitle);
-                        var vidThumburl = item.snippet.thumbnails.default.url;
-                        var vidId = item.id.videoId;
-                        results.push(new SearchResult(vidTitle, vidThumburl, vidId));
-                    });
-                    $('#refresher').click();
-                });
-            });
+class Content extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            page: "home",
+            isRecording: false,
+            audioBlob: null,
+            beginButtonDisabled: false,
+            finishButtonDisabled: true
         };
+        this.mediaRecorder = null;
+        this.audioChunks = [];
 
-        _this.handleBegin = function () {
-            if (player && player.playVideo) player.playVideo();
-        };
-
-        _this.state = { page: "home" };
-        _this.keyWordsearch = _this.keyWordsearch.bind(_this);
-        return _this;
+        this.keyWordsearch = this.keyWordsearch.bind(this);
+        this.handleBegin = this.handleBegin.bind(this);
+        this.handleStartRecording = this.handleStartRecording.bind(this);
+        this.handleStopRecording = this.handleStopRecording.bind(this);
     }
 
-    _createClass(Content, [{
-        key: 'render',
-        value: function render() {
-            var _this2 = this; // Used in onClick handlers
-
-            if (this.state.page == "home") {
-                return (
-                    <div className='centerbox'>
-                        <div className='logo'>
-                            <b>Kar<span>a</span>ok<span>e</span></b>
-                        </div>
-                        <div className='logo2'>
-                            <b>UNLIMITE<span>D</span></b>
-                        </div>
-                        <div className='neonBtn' onClick={() => _this2.setState({ page: "start" })}>
-                            START
-                        </div>
-                        <div className='neonBtn' onClick={() => _this2.setState({ page: "about" })}>
-                            ABOUT
-                        </div>
-                    </div>
-                );
-            } else if (this.state.page == "about") {
-                return (
-                    <div className='centerbox'>
-                        <div className='logo'>
-                            <b>A<span>b</span>out</b>
-                        </div>
-                        <p style={{ textAlign: "left", width: "25%" }}>
-                            Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!
-                        </p>
-                        <p style={{ textAlign: "left", width: "25%" }}>
-                            To begin using KU, simply navigate back to the main screen and then press "START." Then, enter the link of the YouTube video you want to use on the screen that pops up. KU will then display the video on screen, and whenever you're ready, you can press the record button to begin singing! Once done, simply tap the record button again to finish and receive your score.
-                        </p>
-                        <p style={{ textAlign: "left", width: "25%" }}>
-                            © 2025 Brandon Lee.
-                            <br />
-                            <a href='github.com/dabslee/Karaoke'>Source code</a>
-                            {' • '}
-                            <a href='brandonssandbox.com'>Brandon's Website</a>
-                        </p>
-                        <div className='neonBtn' onClick={() => _this2.setState({ page: "home" })}>
-                            BACK
-                        </div>
-                    </div>
-                );
-            } else if (this.state.page == "start" || this.state.page == "start2") {
-                var searchresults = [];
-                results.forEach(function(result) {
-                    searchresults.push(
-                        <div onClick={() => _this2.setState({ page: "watch" + result.id })} className='searchresult' key={result.id}> {}
-                            <img src={result.thumb} alt='No thumbnail available' />
-                            <p style={{ marginLeft: "20px" }}>{result.title}</p>
-                        </div>
-                    );
+    keyWordsearch() {
+        var parser = new DOMParser();
+        gapi.client.setApiKey('AIzaSyDhSebIt708zCZaFeSOdJiNqKLGlMvg5gE');
+        gapi.client.load('youtube', 'v3', () => {
+            var q = $('#query').val();
+            var request = gapi.client.youtube.search.list({
+                q: q,
+                part: 'snippet',
+                maxResults: 10,
+                type: 'video' 
+            });
+            request.execute((response) => {
+                results = []; 
+                var srchItems = response.result.items;
+                $.each(srchItems, (index, item) => {
+                    var vidTitle = parser.parseFromString(item.snippet.title, 'text/html').body.textContent;
+                    var vidThumburl = item.snippet.thumbnails.default.url;
+                    var vidId = item.id.videoId;
+                    results.push(new SearchResult(vidTitle, vidThumburl, vidId)); 
                 });
-                
-                // Determine which page to switch back to for the refresher
-                const nextPage = this.state.page === "start" ? "start2" : "start";
+                $('#refresher').click();
+            });
+        });
+    }
 
-                return (
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" }}>
-                        <div className='logo2' style={{ fontWeight: "thin" }}>
-                            <b>Search for a song:</b>
-                        </div>
-                        <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" }}>
-                            <input id='query' placeholder='e.g. Never Gonna Give You Up' style={{ width: '80%' }} />
-                            <div id='searchbutton' className='logo2' onClick={this.keyWordsearch} style={{ cursor: "pointer", margin: 0 }}>
-                                <b>➔</b>
+    handleBegin() {
+        if (player && player.playVideo) {
+            player.playVideo();
+        }
+    }
+
+    handleStartRecording() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                this.mediaRecorder = new MediaRecorder(stream);
+                this.mediaRecorder.ondataavailable = event => {
+                    this.audioChunks.push(event.data);
+                };
+                this.mediaRecorder.onstop = () => {
+                    this.setState({ audioBlob: new Blob(this.audioChunks, { type: 'audio/webm' }) });
+                    this.audioChunks = [];
+                };
+                this.mediaRecorder.start();
+                this.setState({ isRecording: true });
+            })
+            .catch(err => {
+                console.error("Error accessing microphone:", err);
+            });
+    }
+
+    handleStopRecording() {
+        if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+            this.mediaRecorder.stop();
+            this.setState({ isRecording: false });
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
+            selectedVidId = this.state.page.substring(5); 
+            if (window.YT && window.YT.Player) {
+                if (player) { 
+                    player.destroy();
+                }
+                player = new window.YT.Player('video', {
+                    videoId: selectedVidId,
+                    width: '80%',
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 0,
+                        'disablekb': 1,
+                        'enablejsapi': 1,
+                        'rel': 0 
+                    }
+                });
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.state.audioBlob) {
+            URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
+        }
+        if (player) { 
+            player.destroy();
+            player = null;
+        }
+        if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+            this.mediaRecorder.stop();
+        }
+    }
+
+    render() {
+        if (this.state.page == "home") {
+            return (
+                <div className="centerbox">
+                    <div className="logo"><b>Kar<span>a</span>ok<span>e</span></b></div>
+                    <div className="logo2"><b>UNLIMITE<span>D</span></b></div>
+                    <div className="neonBtn" onClick={() => this.setState({ page: "start" })}>START</div>
+                    <div className="neonBtn" onClick={() => this.setState({ page: "about" })}>ABOUT</div>
+                </div>
+            );
+        } else if (this.state.page == "about") {
+            return (
+                <div className="centerbox">
+                    <div className="logo"><b>A<span>b</span>out</b></div>
+                    <p style={{ textAlign: "left", width: "25%" }}>
+                        Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!
+                    </p>
+                    <p style={{ textAlign: "left", width: "25%" }}>
+                        To begin using KU, simply navigate back to the main screen and then press "START." Then, enter the link of the YouTube video you want to use on the screen that pops up. KU will then display the video on screen, and whenever you're ready, you can press the record button to begin singing! Once done, simply tap the record button again to finish and receive your score.
+                    </p>
+                    <p style={{ textAlign: "left", width: "25%" }}>
+                        © 2025 Brandon Lee.<br />
+                        <a href="https://github.com/dabslee/Karaoke">Source code</a> • <a href="https://brandonssandbox.com">Brandon's Website</a>
+                    </p>
+                    <div className="neonBtn" onClick={() => this.setState({ page: "home" })}>BACK</div>
+                </div>
+            );
+        } else if (this.state.page == "start" || this.state.page == "start2") {
+            const nextPage = this.state.page === "start" ? "start2" : "start";
+            return (
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" }}>
+                    <div className="logo2" style={{ fontWeight: "thin" }}><b>Search for a song:</b></div>
+                    <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" }}>
+                        <input id="query" placeholder="e.g. Never Gonna Give You Up" style={{ width: '80%' }} />
+                        <div id="searchbutton" className="logo2" onClick={this.keyWordsearch} style={{ cursor: "pointer", margin: 0 }}><b>&#x2794;</b></div>
+                        <div id="refresher" onClick={() => this.setState({ page: nextPage })}></div>
+                    </div>
+                    <div id="results" style={{justifyContent: "center"}}>
+                        {results.map(result => (
+                            <div onClick={() => this.setState({ page: "watch" + result.id })} className="searchresult" key={result.id}>
+                                <img src={result.thumb} alt="No thumbnail available" />
+                                <p style={{ marginLeft: "20px" }}>{result.title}</p>
                             </div>
-                            {/* Refresher div to trigger re-render of search results list */}
-                            <div id='refresher' onClick={() => _this2.setState({ page: nextPage })}></div>
-                        </div>
-                        <div id='results' style={{justifyContent: "center"}}>
-                            {searchresults} {/* Render the array of JSX elements */}
-                        </div>
-                        <div className='neonBtn' onClick={() => _this2.setState({ page: "home" })}>
+                        ))}
+                        {' '}
+                    </div>
+                    <div className="neonBtn" onClick={() => this.setState({ page: "home" })}>BACK</div>
+                </div>
+            );
+        } else if (this.state.page.includes("watch")) {
+            selectedVidId = this.state.page.substring(5); 
+            return (
+                <div className="centerbox">
+                    <div id="video" style={{ width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" }}></div>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        <div
+                            className="neonBtn"
+                            onClick={() => {
+                                if (player) {
+                                    player.destroy();
+                                    player = null;
+                                }
+                                if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+                                    this.mediaRecorder.stop();
+                                }
+                                this.setState({
+                                    page: "start",
+                                    isRecording: false,
+                                    beginButtonDisabled: false,
+                                    finishButtonDisabled: true,
+                                    audioBlob: null 
+                                });
+                            }}
+                        >
                             BACK
                         </div>
-                    </div>
-                );
-            } else if (this.state.page.includes("watch")) {
-                selectedVidId = this.state.page.substring(5);
-                return (
-                    <div className='centerbox'>
-                        <div id='video' style={{ width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" }}></div>
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <div
-                                className='neonBtn'
-                                onClick={() => {
-                                    if (player) {
-                                        player.destroy();
-                                        player = null;
-                                    }
-                                    _this2.setState({ page: "start" });
-                                }}
-                            >
-                                BACK
-                            </div>
-                            <div id='begin-button' className='neonBtn' onClick={this.handleBegin}>
-                                BEGIN
-                            </div>
+                        <div
+                            id="begin-button"
+                            className="neonBtn"
+                            onClick={() => {
+                                this.handleBegin(); 
+                                this.handleStartRecording();
+                                this.setState({ beginButtonDisabled: true, finishButtonDisabled: false });
+                            }}
+                            disabled={this.state.beginButtonDisabled}
+                        >
+                            {this.state.isRecording ? 'Recording...' : 'BEGIN'}
+                        </div>
+                        <div
+                            id="finish-button"
+                            className="neonBtn"
+                            onClick={() => {
+                                if (player) {
+                                    player.destroy();
+                                    player = null; 
+                                }
+                                this.handleStopRecording(); 
+                                this.setState({
+                                    page: 'score',
+                                    beginButtonDisabled: false,
+                                    finishButtonDisabled: true
+                                });
+                            }}
+                            disabled={this.state.finishButtonDisabled}
+                        >
+                            Finish
                         </div>
                     </div>
-                );
-            }
-            return null; // Default return if no state matches
+                </div>
+            );
+        } else if (this.state.page === "score") {
+            const currentVideoId = selectedVidId || ""; 
+            return (
+                <div className="centerbox">
+                    <h1>Listen to your recording</h1>
+                    {this.state.audioBlob && (
+                        <audio controls src={URL.createObjectURL(this.state.audioBlob)} />
+                    )}
+                    <div
+                        className="neonBtn"
+                        onClick={() => {
+                            if (this.state.audioBlob) {
+                                URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
+                            }
+                            this.setState({ page: "watch" + currentVideoId, audioBlob: null });
+                        }}
+                    >
+                        Back to Watch Page
+                    </div>
+                </div>
+            );
         }
-    }, {
-        key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps, prevState) {
-            if (this.state.page.includes("watch") && (!prevState.page || !prevState.page.includes("watch") || this.state.page !== prevState.page)) {
-                var _selectedVidId = this.state.page.substring(5);
-                if (window.YT && window.YT.Player) {
-                    if (player) player.destroy();
-                    player = new window.YT.Player('video', {
-                        videoId: _selectedVidId,
-                        width: '80%',
-                        playerVars: {
-                            'autoplay': 0,
-                            'controls': 0,
-                            'disablekb': 1,
-                            'enablejsapi': 1
-                        }
-                    });
-                }
-            }
-        }
-    }]);
-
-    return Content;
-}(React.Component);
+        return null; 
+    }
+}
 
 var domContainer = document.querySelector('#content');
-ReactDOM.render(<Content />, domContainer);
+ReactDOM.render(React.createElement(Content, null), domContainer);
 
 document.addEventListener('keydown', function (e) {
     if (e.code === "Enter" && document.getElementById("searchbutton")) document.getElementById("searchbutton").click();
