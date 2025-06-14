@@ -30083,7 +30083,7 @@
         )));
       } else if (this.state.page === "score") {
         const currentVideoId = selectedVidId || "";
-        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("h1", null, "Listen to your recording"), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob) }), /* @__PURE__ */ import_react.default.createElement(
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Your Performance")), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Score:")), /* @__PURE__ */ import_react.default.createElement("div", { className: "score" }, "XXX"), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob), style: { margin: "30px" } }), /* @__PURE__ */ import_react.default.createElement(
           "div",
           {
             className: "neonBtn",

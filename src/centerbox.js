@@ -239,9 +239,11 @@ class Content extends React.Component {
             const currentVideoId = selectedVidId || ""; 
             return (
                 <div className="centerbox">
-                    <h1>Listen to your recording</h1>
+                    <div className="logo" style={{marginBottom: '20px'}}><b>Your Performance</b></div>
+                    <div className="logo2"><b>Score:</b></div>
+                    <div className="score" style={{marginBottom: '0px'}}>XXX</div>
                     {this.state.audioBlob && (
-                        <audio controls src={URL.createObjectURL(this.state.audioBlob)} />
+                        <audio controls src={URL.createObjectURL(this.state.audioBlob)} style={{margin: '30px'}} />
                     )}
                     <div
                         className="neonBtn"

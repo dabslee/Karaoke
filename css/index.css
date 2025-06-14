@@ -1,5 +1,5 @@
 @import url("fonts.css");
-@import url(//fonts.googleapis.com/css?family=Vibur);
+@import url(https://fonts.googleapis.com/css?family=Vibur);
 
 body {
     background: url("../assets/img/background.png");
@@ -125,6 +125,12 @@ input:focus {
 }
 .logo2 b span:nth-of-type(2){
     animation: blink linear infinite 6s;
+}
+
+.score {
+    font: 400 100px "VarelaRound";
+    color: #fee;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #28edff, 0 0 0.5em #28edff, 0 0 0.1em #28edff, 0 10px 3px #000;
 }
 
 @keyframes blink {
