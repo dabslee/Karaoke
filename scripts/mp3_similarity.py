@@ -1,4 +1,5 @@
 import argparse
+import sys
 import librosa
 import numpy as np
 from pydub import AudioSegment
@@ -56,7 +57,7 @@ def calculate_similarity(file1_path, file2_path, target_dbfs=-20.0):
             except FileNotFoundError:
                  raise FileNotFoundError(f"Audio file not found: {file_path}")
             except Exception as e:
-                print(f"Error loading MP3 with pydub: {file_path}. Ensure ffmpeg is installed. Error: {e}")
+                print(f"Error loading MP3 with pydub: {file_path}. Ensure ffmpeg is installed. Error: {e}", file=sys.stderr)
                 return -1.0
 
             normalized_audio = audio.apply_gain(target_dbfs - audio.dBFS)
@@ -96,7 +97,7 @@ def calculate_similarity(file1_path, file2_path, target_dbfs=-20.0):
         valid_indices = np.where((aligned_f0_1 > 1e-6) & (aligned_f0_2 > 1e-6))[0]
 
         if len(valid_indices) < MIN_FRAMES_THRESHOLD:
-            print(f"Warning: Insufficient number of valid voiced frames for comparison (found {len(valid_indices)}, need {MIN_FRAMES_THRESHOLD}). Similarity set to 0.")
+            print(f"Warning: Insufficient number of valid voiced frames for comparison (found {len(valid_indices)}, need {MIN_FRAMES_THRESHOLD}). Similarity set to 0.", file=sys.stderr)
             return 0.0
 
         f0_1_valid = aligned_f0_1[valid_indices]
@@ -110,7 +111,7 @@ def calculate_similarity(file1_path, file2_path, target_dbfs=-20.0):
         avg_cent_diff = np.mean(cent_diffs)
 
         if np.isnan(avg_cent_diff): # Should not happen if valid_indices check is robust
-            print("Warning: Average cent difference is NaN. Setting similarity to 0.")
+            print("Warning: Average cent difference is NaN. Setting similarity to 0.", file=sys.stderr)
             return 0.0
 
         # Convert average cent difference to similarity percentage
@@ -125,12 +126,12 @@ def calculate_similarity(file1_path, file2_path, target_dbfs=-20.0):
         return similarity_percentage
 
     except FileNotFoundError as e:
-        print(f"Error: {e}")
+        print(f"Error: {e}", file=sys.stderr)
         return -1.0
     except Exception as e:
-        print(f"An error occurred during processing: {e}")
+        print(f"An error occurred during processing: {e}", file=sys.stderr)
         # import traceback
-        # print(traceback.format_exc()) # Useful for debugging
+        # print(traceback.format_exc(), file=sys.stderr) # Useful for debugging
         return -1.0
 
 if __name__ == "__main__":
@@ -152,7 +153,19 @@ if __name__ == "__main__":
     try:
         similarity = calculate_similarity(args.file1, args.file2, args.target_dbfs)
         if similarity >= 0: # calculate_similarity returns -1.0 on error
-            print(f"The pitch-based similarity between the two MP3 files is: {similarity:.2f}%")
+            # Print only the numerical score to stdout for machine readability
+            print(f"{similarity:.2f}")
+        else:
+            # If calculate_similarity returned an error code like -1.0,
+            # it would have already printed to stderr.
+            # Optionally, print a generic error to stderr here if no specific error was printed by the function.
+            # For now, we assume calculate_similarity handles its own error reporting to stderr.
+            # If calculate_similarity is supposed to always print to stderr on error,
+            # then we might not need an else here, or just exit with an error code.
+            # Example:
+            # print("Error: Failed to calculate similarity.", file=sys.stderr)
+            sys.exit(1) # Exit with a non-zero status code to indicate failure
     except Exception as e:
         # This catches errors not handled within calculate_similarity or arg parsing issues
-        print(f"An unexpected error occurred in main: {e}")
+        print(f"An unexpected error occurred in main: {e}", file=sys.stderr)
+        sys.exit(1) # Exit with a non-zero status code

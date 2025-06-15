@@ -1,4 +1,6 @@
+Flask
+yt-dlp
+pydub
 librosa
 numpy
-pydub
-SoundFile
+Flask-CORS==4.0.0

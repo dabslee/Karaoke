@@ -22,7 +22,10 @@ class Content extends React.Component {
             isRecording: false,
             audioBlob: null,
             beginButtonDisabled: false,
-            finishButtonDisabled: true
+            finishButtonDisabled: true,
+            currentScore: null,
+            page_status: null,
+            lastSelectedVidId: null
         };
         this.mediaRecorder = null;
         this.audioChunks = [];
@@ -31,6 +34,7 @@ class Content extends React.Component {
         this.handleBegin = this.handleBegin.bind(this);
         this.handleStartRecording = this.handleStartRecording.bind(this);
         this.handleStopRecording = this.handleStopRecording.bind(this);
+        this.initiateScoreCalculation = this.initiateScoreCalculation.bind(this);
     }
 
     keyWordsearch() {
@@ -72,8 +76,12 @@ class Content extends React.Component {
                     this.audioChunks.push(event.data);
                 };
                 this.mediaRecorder.onstop = () => {
-                    this.setState({ audioBlob: new Blob(this.audioChunks, { type: 'audio/webm' }) });
+                    const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
                     this.audioChunks = [];
+                    this.setState({ audioBlob: audioBlob });
+                    if (this.state.page_status === 'calculating') {
+                        this.initiateScoreCalculation();
+                    }
                 };
                 this.mediaRecorder.start();
                 this.setState({ isRecording: true });
@@ -81,6 +89,44 @@ class Content extends React.Component {
             .catch(err => {
                 console.error("Error accessing microphone:", err);
             });
+    }
+
+    initiateScoreCalculation() {
+        if (!this.state.audioBlob) {
+            console.error("No audio blob to calculate score.");
+            this.setState({ page: 'score', page_status: null, currentScore: "Error: No audio recorded" });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('audio', this.state.audioBlob, 'recording.webm');
+        formData.append('videoId', this.state.lastSelectedVidId);
+
+        fetch('http://localhost:5000/api/calculate_score', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            this.setState({ 
+                page: 'score', 
+                currentScore: data.score, 
+                page_status: null 
+            });
+        })
+        .catch(error => {
+            console.error("Error calculating score:", error);
+            this.setState({ 
+                page: 'score', 
+                currentScore: "Error calculating score", 
+                page_status: null 
+            });
+        });
     }
 
     handleStopRecording() {
@@ -218,15 +264,19 @@ class Content extends React.Component {
                             className={`neonBtn ${this.state.finishButtonDisabled ? 'disabled-look' : ''}`}
                             onClick={() => {
                                 if (this.state.finishButtonDisabled) return;
-                                if (player) {
-                                    player.destroy();
-                                    player = null; 
-                                }
-                                this.handleStopRecording(); 
+                                // player will be destroyed in componentDidUpdate when page changes from "watch..."
                                 this.setState({
-                                    page: 'score',
-                                    beginButtonDisabled: false,
-                                    finishButtonDisabled: true
+                                    page: 'calculating_score',
+                                    page_status: 'calculating',
+                                    lastSelectedVidId: selectedVidId, 
+                                    beginButtonDisabled: false, // Reset for next time
+                                    finishButtonDisabled: true // Reset for next time
+                                }, () => {
+                                    if (player) {
+                                        player.destroy();
+                                        player = null;
+                                    }
+                                    this.handleStopRecording(); // This will trigger initiateScoreCalculation via onstop
                                 });
                             }}
                         >
@@ -235,13 +285,20 @@ class Content extends React.Component {
                     </div>
                 </div>
             );
+        } else if (this.state.page === "calculating_score") {
+            return (
+                <div className="centerbox">
+                    <div className="logo2"><b>Calculating your score...</b></div>
+                    {/* You might want to add a spinner or a more engaging loading animation here */}
+                </div>
+            );
         } else if (this.state.page === "score") {
-            const currentVideoId = selectedVidId || ""; 
+            const currentVideoId = this.state.lastSelectedVidId || ""; 
             return (
                 <div className="centerbox">
                     <div className="logo" style={{marginBottom: '20px'}}><b>Your Performance</b></div>
                     <div className="logo2"><b>Score:</b></div>
-                    <div className="score" style={{marginBottom: '0px'}}>XXX</div>
+                    <div className="score" style={{marginBottom: '0px'}}>{this.state.currentScore !== null ? this.state.currentScore : "Calculating..."}</div>
                     {this.state.audioBlob && (
                         <audio controls src={URL.createObjectURL(this.state.audioBlob)} style={{margin: '30px'}} />
                     )}
@@ -251,10 +308,18 @@ class Content extends React.Component {
                             if (this.state.audioBlob) {
                                 URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
                             }
-                            this.setState({ page: "watch" + currentVideoId, audioBlob: null });
+                            this.setState({ 
+                                page: "watch" + currentVideoId, 
+                                audioBlob: null, 
+                                currentScore: null, 
+                                page_status: null,
+                                // lastSelectedVidId remains for the watch page
+                                beginButtonDisabled: false, 
+                                finishButtonDisabled: true 
+                            });
                         }}
                     >
-                        Back to Watch Page
+                        Back
                     </div>
                 </div>
             );

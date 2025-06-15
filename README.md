@@ -1,6 +1,6 @@
 # Karaoke Unlimited
 
-<img src="https://img.shields.io/badge/React-18.2.0-darkcyan?style=flat-square&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/jQuery-3.7.1-blue?style=flat-square&logo=jquery&logoColor=white"> <img src="https://img.shields.io/badge/Babel-6.26.0-yellow?style=flat-square&logo=babel&logoColor=white"> <img src="https://img.shields.io/badge/JSX-supported-orange?style=flat-square&logo=react&logoColor=white">
+<img src="https://img.shields.io/badge/React-18.2.0-darkcyan?style=flat-square&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/jQuery-3.7.1-blue?style=flat-square&logo=jquery&logoColor=white"> <img src="https://img.shields.io/badge/Babel-6.26.0-yellow?style=flat-square&logo=babel&logoColor=white"> <img src="https://img.shields.io/badge/JSX-supported-orange?style=flat-square&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/Flask-3.1.1-lightgrey?style=flat-square&logo=flask&logoColor=white">
 
 ![Home Screen](assets/img/homescreen.png)
 
@@ -11,10 +11,12 @@ To begin using KU, simply navigate back to the main screen and then press "START
 ## How to Run
 
 1. **Install dependencies:**
-   Open your terminal or command prompt, navigate to the project's root directory, and run the following command:
+   Assuming you have Node installed, open your terminal or command prompt, navigate to the project's root directory, and run the following command:
    ```bash
    npm install
    ```
+
+   You'll also need to [install FFmpeg](https://ffmpeg.org/download.html) and add its executables to your environment PATH.
 
 2. **Build the project:**
    In the same terminal, run the following script. This will watch for changes in the `src` directory and output the built files into the project's root directory.
@@ -23,14 +25,11 @@ To begin using KU, simply navigate back to the main screen and then press "START
    ```
 
 3. **Serve the application:**
-   To avoid potential CORS (Cross-Origin Resource Sharing) errors when running the application directly from the file system, it's best to serve it using a local HTTP server.
-
-   **Using Python's built-in server (if you have Python installed):**
    Navigate to the project's root directory in your terminal and run:
    ```bash
-   python -m http.server
+   run_all.bat
    ```
-   This will typically serve the project at `http://localhost:8000/`.
+   This will boot up the lightweight Flask backend at `http://localhost:5000/` and serve the project at `http://localhost:8000/`.
 
 4. **Open the application:**
    Open your web browser and navigate to the address provided by your local HTTP server (e.g., `http://localhost:8000`). You should see `index.html` loaded.

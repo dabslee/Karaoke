@@ -29922,7 +29922,10 @@
         isRecording: false,
         audioBlob: null,
         beginButtonDisabled: false,
-        finishButtonDisabled: true
+        finishButtonDisabled: true,
+        currentScore: null,
+        page_status: null,
+        lastSelectedVidId: null
       };
       this.mediaRecorder = null;
       this.audioChunks = [];
@@ -29930,6 +29933,7 @@
       this.handleBegin = this.handleBegin.bind(this);
       this.handleStartRecording = this.handleStartRecording.bind(this);
       this.handleStopRecording = this.handleStopRecording.bind(this);
+      this.initiateScoreCalculation = this.initiateScoreCalculation.bind(this);
     }
     keyWordsearch() {
       var parser = new DOMParser();
@@ -29967,13 +29971,49 @@
           this.audioChunks.push(event.data);
         };
         this.mediaRecorder.onstop = () => {
-          this.setState({ audioBlob: new Blob(this.audioChunks, { type: "audio/webm" }) });
+          const audioBlob = new Blob(this.audioChunks, { type: "audio/webm" });
           this.audioChunks = [];
+          this.setState({ audioBlob });
+          if (this.state.page_status === "calculating") {
+            this.initiateScoreCalculation();
+          }
         };
         this.mediaRecorder.start();
         this.setState({ isRecording: true });
       }).catch((err) => {
         console.error("Error accessing microphone:", err);
+      });
+    }
+    initiateScoreCalculation() {
+      if (!this.state.audioBlob) {
+        console.error("No audio blob to calculate score.");
+        this.setState({ page: "score", page_status: null, currentScore: "Error: No audio recorded" });
+        return;
+      }
+      const formData = new FormData();
+      formData.append("audio", this.state.audioBlob, "recording.webm");
+      formData.append("videoId", this.state.lastSelectedVidId);
+      fetch("http://localhost:5000/api/calculate_score", {
+        method: "POST",
+        body: formData
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      }).then((data) => {
+        this.setState({
+          page: "score",
+          currentScore: data.score,
+          page_status: null
+        });
+      }).catch((error) => {
+        console.error("Error calculating score:", error);
+        this.setState({
+          page: "score",
+          currentScore: "Error calculating score",
+          page_status: null
+        });
       });
     }
     handleStopRecording() {
@@ -30067,23 +30107,30 @@
             className: `neonBtn ${this.state.finishButtonDisabled ? "disabled-look" : ""}`,
             onClick: () => {
               if (this.state.finishButtonDisabled) return;
-              if (player) {
-                player.destroy();
-                player = null;
-              }
-              this.handleStopRecording();
               this.setState({
-                page: "score",
+                page: "calculating_score",
+                page_status: "calculating",
+                lastSelectedVidId: selectedVidId,
                 beginButtonDisabled: false,
+                // Reset for next time
                 finishButtonDisabled: true
+                // Reset for next time
+              }, () => {
+                if (player) {
+                  player.destroy();
+                  player = null;
+                }
+                this.handleStopRecording();
               });
             }
           },
           "Finish"
         )));
+      } else if (this.state.page === "calculating_score") {
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Calculating your score...")));
       } else if (this.state.page === "score") {
-        const currentVideoId = selectedVidId || "";
-        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Your Performance")), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Score:")), /* @__PURE__ */ import_react.default.createElement("div", { className: "score" }, "XXX"), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob), style: { margin: "30px" } }), /* @__PURE__ */ import_react.default.createElement(
+        const currentVideoId = this.state.lastSelectedVidId || "";
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Your Performance")), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Score:")), /* @__PURE__ */ import_react.default.createElement("div", { className: "score", style: { marginBottom: "0px" } }, this.state.currentScore !== null ? this.state.currentScore : "Calculating..."), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob), style: { margin: "30px" } }), /* @__PURE__ */ import_react.default.createElement(
           "div",
           {
             className: "neonBtn",
@@ -30091,10 +30138,18 @@
               if (this.state.audioBlob) {
                 URL.revokeObjectURL(URL.createObjectURL(this.state.audioBlob));
               }
-              this.setState({ page: "watch" + currentVideoId, audioBlob: null });
+              this.setState({
+                page: "watch" + currentVideoId,
+                audioBlob: null,
+                currentScore: null,
+                page_status: null,
+                // lastSelectedVidId remains for the watch page
+                beginButtonDisabled: false,
+                finishButtonDisabled: true
+              });
             }
           },
-          "Back to Watch Page"
+          "Back"
         ));
       }
       return null;
