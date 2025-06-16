@@ -30018,7 +30018,7 @@
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
           reject(new Error("Score calculation timed out"));
-        }, 30 * 1e3);
+        }, 10 * 1e3);
       });
       Promise.race([scoreCalculationPromise, timeoutPromise]).then((response) => {
         clearInterval(interval);

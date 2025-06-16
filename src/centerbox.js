@@ -129,7 +129,7 @@ class Content extends React.Component {
         const timeoutPromise = new Promise((_, reject) => {
             setTimeout(() => {
                 reject(new Error('Score calculation timed out'));
-            }, 30*1000); // 30 second timeout on calculation
+            }, 30*1000); // timeout on calculation
         });
 
         Promise.race([scoreCalculationPromise, timeoutPromise])
