@@ -336,7 +336,6 @@ class Content extends React.Component {
                                 audioBlob: null, 
                                 currentScore: null, 
                                 page_status: null,
-                                // lastSelectedVidId remains for the watch page
                                 beginButtonDisabled: false, 
                                 finishButtonDisabled: true 
                             });
