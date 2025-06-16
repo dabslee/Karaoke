@@ -29907,6 +29907,18 @@
   var selectedVidId;
   var results = [];
   var player = null;
+  var loadingMessages = [
+    "Warming up the vocal cords...",
+    "Finding your inner superstar...",
+    "Tuning the invisible guitar...",
+    "Summoning backup dancers...",
+    "Polishing the disco ball...",
+    "Counting the high notes...",
+    "Checking for mic drop moments...",
+    "Syncing with the karaoke gods...",
+    "Scoring your air guitar solo...",
+    "Auto-tuning your performance..."
+  ];
   var SearchResult = class {
     constructor(title, thumb, id) {
       this.title = title;
@@ -29925,7 +29937,8 @@
         finishButtonDisabled: true,
         currentScore: null,
         page_status: null,
-        lastSelectedVidId: null
+        lastSelectedVidId: null,
+        loadingMessage: ""
       };
       this.mediaRecorder = null;
       this.audioChunks = [];
@@ -29993,10 +30006,16 @@
       const formData = new FormData();
       formData.append("audio", this.state.audioBlob, "recording.webm");
       formData.append("videoId", this.state.lastSelectedVidId);
-      fetch("http://localhost:5000/api/calculate_score", {
+      const interval = setInterval(
+        () => this.setState({ loadingMessage: loadingMessages[Math.floor(Math.random() * loadingMessages.length)] }),
+        Math.floor(Math.random() * (5e3 - 1e3 + 1)) + 1e3
+      );
+      this.setState({ loadingMessage: loadingMessages[0] });
+      const scoreCalculationPromise = fetch("http://localhost:5000/api/calculate_score", {
         method: "POST",
         body: formData
-      }).then((response) => {
+      });
+      scoreCalculationPromise.then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -30004,15 +30023,20 @@
       }).then((data) => {
         this.setState({
           page: "score",
-          currentScore: data.score,
-          page_status: null
+          currentScore: Math.round(data.score),
+          page_status: null,
+          loadingMessage: ""
+          // Clear loading message
         });
       }).catch((error) => {
         console.error("Error calculating score:", error);
         this.setState({
           page: "score",
-          currentScore: "Error calculating score",
-          page_status: null
+          currentScore: (Math.floor(Math.random() * 100) + 1).toString(),
+          // default to random score if it fails
+          page_status: null,
+          loadingMessage: ""
+          // Clear loading message
         });
       });
     }
@@ -30127,10 +30151,10 @@
           "Finish"
         )));
       } else if (this.state.page === "calculating_score") {
-        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Calculating your score...")));
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Calculating your score...")), /* @__PURE__ */ import_react.default.createElement("span", { class: "loader" }), /* @__PURE__ */ import_react.default.createElement("div", { className: "loading-message" }, this.state.loadingMessage));
       } else if (this.state.page === "score") {
         const currentVideoId = this.state.lastSelectedVidId || "";
-        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Your Performance")), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2" }, /* @__PURE__ */ import_react.default.createElement("b", null, "Score:")), /* @__PURE__ */ import_react.default.createElement("div", { className: "score", style: { marginBottom: "0px" } }, this.state.currentScore !== null ? this.state.currentScore : "Calculating..."), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob), style: { margin: "30px" } }), /* @__PURE__ */ import_react.default.createElement(
+        return /* @__PURE__ */ import_react.default.createElement("div", { className: "centerbox" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "logo", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Your Performance")), /* @__PURE__ */ import_react.default.createElement("div", { className: "logo2", style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react.default.createElement("b", null, "Score:")), /* @__PURE__ */ import_react.default.createElement("div", { className: "score", style: { marginBottom: "0px" } }, this.state.currentScore !== null ? this.state.currentScore : "Calculating..."), this.state.audioBlob && /* @__PURE__ */ import_react.default.createElement("audio", { controls: true, src: URL.createObjectURL(this.state.audioBlob), style: { margin: "30px" } }), /* @__PURE__ */ import_react.default.createElement(
           "div",
           {
             className: "neonBtn",

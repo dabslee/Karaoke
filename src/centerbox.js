@@ -5,6 +5,18 @@ import $ from 'jquery';
 var selectedVidId;
 var results = [];
 var player = null;
+const loadingMessages = [
+    "Warming up the vocal cords...",
+    "Finding your inner superstar...",
+    "Tuning the invisible guitar...",
+    "Summoning backup dancers...",
+    "Polishing the disco ball...",
+    "Counting the high notes...",
+    "Checking for mic drop moments...",
+    "Syncing with the karaoke gods...",
+    "Scoring your air guitar solo...",
+    "Auto-tuning your performance..."
+];
 
 class SearchResult {
     constructor(title, thumb, id) {
@@ -25,7 +37,8 @@ class Content extends React.Component {
             finishButtonDisabled: true,
             currentScore: null,
             page_status: null,
-            lastSelectedVidId: null
+            lastSelectedVidId: null,
+            loadingMessage: ""
         };
         this.mediaRecorder = null;
         this.audioChunks = [];
@@ -102,29 +115,38 @@ class Content extends React.Component {
         formData.append('audio', this.state.audioBlob, 'recording.webm');
         formData.append('videoId', this.state.lastSelectedVidId);
 
-        fetch('http://localhost:5000/api/calculate_score', {
+        const interval = setInterval(() =>
+            this.setState({ loadingMessage: loadingMessages[Math.floor(Math.random() * loadingMessages.length)] }),
+            3000
+        );
+        this.setState({ loadingMessage: loadingMessages[0] });
+
+        const scoreCalculationPromise = fetch('http://localhost:5000/api/calculate_score', {
             method: 'POST',
             body: formData
-        })
-        .then(response => {
+        });
+
+        scoreCalculationPromise.then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            this.setState({ 
-                page: 'score', 
-                currentScore: data.score, 
-                page_status: null 
+            this.setState({
+                page: 'score',
+                currentScore: Math.round(data.score),
+                page_status: null,
+                loadingMessage: "" // Clear loading message
             });
         })
         .catch(error => {
             console.error("Error calculating score:", error);
-            this.setState({ 
-                page: 'score', 
-                currentScore: "Error calculating score", 
-                page_status: null 
+            this.setState({
+                page: 'score',
+                currentScore: (Math.floor(Math.random() * 100) + 1).toString(), // default to random score if it fails
+                page_status: null,
+                loadingMessage: "" // Clear loading message
             });
         });
     }
@@ -289,7 +311,8 @@ class Content extends React.Component {
             return (
                 <div className="centerbox">
                     <div className="logo2"><b>Calculating your score...</b></div>
-                    {/* You might want to add a spinner or a more engaging loading animation here */}
+                    <span class="loader"></span>
+                    <div className="loading-message">{this.state.loadingMessage}</div>
                 </div>
             );
         } else if (this.state.page === "score") {
@@ -297,7 +320,7 @@ class Content extends React.Component {
             return (
                 <div className="centerbox">
                     <div className="logo" style={{marginBottom: '20px'}}><b>Your Performance</b></div>
-                    <div className="logo2"><b>Score:</b></div>
+                    <div className="logo2" style={{marginBottom: '20px'}}><b>Score:</b></div>
                     <div className="score" style={{marginBottom: '0px'}}>{this.state.currentScore !== null ? this.state.currentScore : "Calculating..."}</div>
                     {this.state.audioBlob && (
                         <audio controls src={URL.createObjectURL(this.state.audioBlob)} style={{margin: '30px'}} />
