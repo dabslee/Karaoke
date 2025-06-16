@@ -1,12 +1,19 @@
 @import url("fonts.css");
 @import url(https://fonts.googleapis.com/css?family=Vibur);
 
+html {
+  font-size: 16px;
+}
+
 body {
     background: url("../assets/img/background.png");
     background-size: cover;
     font-family: 'VarelaRound';
     color: #ccc;
     user-select: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .centerbox {
@@ -15,13 +22,15 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    flex-grow: 1;
+    box-sizing: border-box;
+    padding: 4rem;
 }
 
 #footertext {
     position:fixed;
-    bottom:20px;
-    right:20px;
+    bottom: 1.25rem;
+    right: 1.25rem;
     z-index:2;
     font-family:'VarelaRound';
 }
@@ -34,23 +43,23 @@ a:hover {
 }
 
 .neonBtn {
-    font: 400 20px "VarelaRound";
+    font: 400 1.25rem "VarelaRound";
     color: rgba(255,255,255,0.5);
-    padding: 15px;
+    padding: 0.9375rem; /* 15px */
     border-style: solid;
     border-color: rgba(255,255,255,0.5);
-    border-radius: 20px;
+    border-radius: 1.25rem;
     cursor: pointer;
     transition: 0.3s;
-    width: 200px;
+    width: 12.5rem;
     text-align: center;
-    margin: 10px;
+    margin: 0.625rem;
 }
 .neonBtn:hover:not(.disabled-look) {
     color: #fee;
-    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #53ff28, 0 0 0.5em #53ff28, 0 0 0.1em #53ff28, 0 10px 3px #000;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #53ff28, 0 0 0.5em #53ff28, 0 0 0.1em #53ff28, 0 0.625rem 3px #000;
     border-color: #fee;
-    box-shadow: 0 -10px 70px rgba(255,255,255,0.3), 0 0 2px, 0 0 1em #53ff28, inset 0 0 0.5em #53ff28, 0 10px 3px #000;
+    box-shadow: 0 -0.625rem 4.375rem rgba(255,255,255,0.3), 0 0 2px, 0 0 1em #53ff28, inset 0 0 0.5em #53ff28, 0 0.625rem 3px #000;
 }
 .neonBtn.disabled-look {
   opacity: 0.25;
@@ -63,7 +72,7 @@ input {
     background-color: rgba(0,0,0,0);
     border: 1px white;
     border-style: none none solid none;
-    font-size: 24px;
+    font-size: 1.5rem; /* 24px */
     color: white;
 }
 input:focus {
@@ -74,15 +83,16 @@ input:focus {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-bottom: 30px;
+    justify-content: center;
+    margin-bottom: 1.875rem;
     width: 100%;
 }
 .searchresult {
     background-color: rgba(100,100,100,0.5);
-    padding: 20px;
-    width: 300px;
+    padding: 1.25rem;
+    width: 18.75rem;
     height: min-content;
-    margin: 10px;
+    margin: 0.625rem;
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -90,20 +100,20 @@ input:focus {
     justify-content: center;
 }
 .searchresult img {
-    width: 180px;
-    height: 135px;
+    width: 11.25rem;
+    height: 8.4375rem;
 }
 .searchresult:hover {
     background-color: rgba(100,100,100,0.7);
 }
 
 .logo {
-    margin-bottom: -30px;
+    margin-bottom: -1.875rem;
 }
 .logo b{
-    font: 400 100px "Vibur";
+    font: 400 6.25rem "Vibur";
     color: #fee;
-    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff4444, 0 0 0.5em #ff4444, 0 0 0.1em #ff4444, 0 10px 3px #000;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ff4444, 0 0 0.5em #ff4444, 0 0 0.1em #ff4444, 0 0.625rem 3px #000;
 }
 .logo b span{
     animation: blink linear infinite 2s;
@@ -113,12 +123,12 @@ input:focus {
 }
 
 .logo2 {
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
 }
 .logo2 b{
-    font: 400 30px "VarelaRound";
+    font: 400 1.875rem "VarelaRound";
     color: #fee;
-    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #28edff, 0 0 0.5em #28edff, 0 0 0.1em #28edff, 0 10px 3px #000;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #28edff, 0 0 0.5em #28edff, 0 0 0.1em #28edff, 0 0.625rem 3px #000;
 }
 .logo2 b span{
     animation: blink linear infinite 4s;
@@ -128,9 +138,9 @@ input:focus {
 }
 
 .score {
-    font: 400 100px "VarelaRound";
+    font: 400 6.25rem "VarelaRound";
     color: #fee;
-    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #28edff, 0 0 0.5em #28edff, 0 0 0.1em #28edff, 0 10px 3px #000;
+    text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #28edff, 0 0 0.5em #28edff, 0 0 0.1em #28edff, 0 0.625rem 3px #000;
 }
 
 @keyframes blink {
@@ -168,16 +178,16 @@ input:focus {
 
 .loading-message {
     color: #ccc; /* Light grey color, consistent with other text */
-    font-size: 18px; /* Slightly smaller than neonBtn text */
+    font-size: 1.125rem;
     text-align: center; /* Center the message */
 }
 
 .loader {
   position: relative;
-  width: 100px;
-  height: 100px;
-  margin-top: -20px;
-  margin-bottom: 20px;
+  width: 6.25rem;
+  height: 6.25rem;
+  margin-top: -1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .loader:before , .loader:after{
@@ -185,14 +195,102 @@ input:focus {
   border-radius: 50%;
   position: absolute;
   inset: 0;
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3) inset;
+  box-shadow: 0 0 0.625rem 0.125rem rgba(0, 0, 0, 0.3) inset;
 }
 .loader:after {
-  box-shadow: 0 2px 0 #00d5ff inset;
+  box-shadow: 0 0.125rem 0 #00d5ff inset;
   animation: rotate 2s linear infinite;
 }
 
 @keyframes rotate {
   0% {  transform: rotate(0)}
   100% { transform: rotate(360deg)}
+}
+
+.about-text-paragraph {
+    width: 50%; /* Default width for larger screens, adjust as needed */
+    margin-left: auto; /* Center the block */
+    margin-right: auto; /* Center the block */
+    margin-bottom: 0.9375rem;
+}
+
+.video-controls-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 48rem) {
+    .logo b {
+        font-size: 3.75rem;
+        text-shadow: 0 -20px 50px, 0 0 1px, 0 0 0.5em #ff4444, 0 0 0.25em #ff4444, 0 0 0.05em #ff4444, 0 0.3125rem 1.5px #000; /* 5px */
+    }
+
+    .logo2 b {
+        font-size: 1.25rem;
+        text-shadow: 0 -20px 50px, 0 0 1px, 0 0 0.5em #28edff, 0 0 0.25em #28edff, 0 0 0.05em #28edff, 0 0.3125rem 1.5px #000; /* 5px */
+    }
+
+    .logo {
+        margin-bottom: -0.9375rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .logo2 {
+        margin-bottom: 1.875rem;
+    }
+
+    .neonBtn {
+        width: 11.25rem;
+        padding: 0.75rem;
+        font-size: 1.125rem;
+    }
+
+    .video-controls-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #results {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .searchresult {
+        width: 90%;
+        margin: 0.625rem 0;
+    }
+
+    .searchresult img {
+        width: 100%;
+        max-width: 15.625rem;
+        height: auto;
+    }
+
+    input {
+        width: 80%;
+        margin-bottom: 0.9375rem;
+    }
+
+    .about-text-paragraph {
+        width: 90%; /* Wider for smaller screens */
+    }
+
+    #footertext {
+        right: unset;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0.625rem;
+        font-size: 0.8125rem;
+        text-align: center;
+        width: 100%;
+    }
+
+    .centerbox {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }

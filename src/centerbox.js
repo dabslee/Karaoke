@@ -226,13 +226,13 @@ class Content extends React.Component {
             return (
                 <div className="centerbox">
                     <div className="logo"><b>A<span>b</span>out</b></div>
-                    <p style={{ textAlign: "left", width: "25%" }}>
+                    <p className="about-text-paragraph" style={{ textAlign: "left" }}>
                         Karaoke Unlimited (KU) is a free webapp for conducting home Karaoke sessions! Rather than relying on a preset bank of songs to choose from, KU allows you to choose songs from videos on YouTube. Once you choose a video, you can sing along to it on KU, and once finished, KU will offer a score based on how closely your singing matched the video's audio!
                     </p>
-                    <p style={{ textAlign: "left", width: "25%" }}>
+                    <p className="about-text-paragraph" style={{ textAlign: "left" }}>
                         To begin using KU, simply navigate back to the main screen and then press "START." Then, enter the link of the YouTube video you want to use on the screen that pops up. KU will then display the video on screen, and whenever you're ready, you can press the record button to begin singing! Once done, simply tap the record button again to finish and receive your score.
                     </p>
-                    <p style={{ textAlign: "left", width: "25%" }}>
+                    <p className="about-text-paragraph" style={{ textAlign: "left" }}>
                         © 2025 Brandon Lee.<br />
                         <a href="https://github.com/dabslee/Karaoke">Source code</a> • <a href="https://brandonssandbox.com">Brandon's Website</a>
                     </p>
@@ -242,7 +242,7 @@ class Content extends React.Component {
         } else if (this.state.page == "start" || this.state.page == "start2") {
             const nextPage = this.state.page === "start" ? "start2" : "start";
             return (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "10%" }}>
+                <div className="centerbox">
                     <div className="logo2" style={{ fontWeight: "thin" }}><b>Search for a song:</b></div>
                     <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "30px" }}>
                         <input id="query" placeholder="e.g. Never Gonna Give You Up" style={{ width: '80%' }} />
@@ -266,7 +266,7 @@ class Content extends React.Component {
             return (
                 <div className="centerbox">
                     <div id="video" style={{ width: "80%", pointerEvents: "none", aspectRatio: "16/9", height: "auto" }}></div>
-                    <div style={{ display: "flex", flexDirection: "row" }}>
+                    <div className="video-controls-container">
                         <div
                             className="neonBtn"
                             onClick={() => {
