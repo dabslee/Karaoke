@@ -135,7 +135,7 @@ class Content extends React.Component {
         .then(data => {
             this.setState({
                 page: 'score',
-                currentScore: Math.round(data.score),
+                currentScore: Math.max(0, Math.round(data.score + (Math.random() * 10 - 5)).toString()), // plus or minus random variation
                 page_status: null,
                 loadingMessage: "" // Clear loading message
             });
