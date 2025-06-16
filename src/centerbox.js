@@ -126,29 +126,48 @@ class Content extends React.Component {
             body: formData
         });
 
-        scoreCalculationPromise.then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            this.setState({
-                page: 'score',
-                currentScore: Math.max(0, Math.round(data.score + (Math.random() * 10 - 5)).toString()), // plus or minus random variation
-                page_status: null,
-                loadingMessage: "" // Clear loading message
-            });
-        })
-        .catch(error => {
-            console.error("Error calculating score:", error);
-            this.setState({
-                page: 'score',
-                currentScore: (Math.floor(Math.random() * 100) + 1).toString(), // default to random score if it fails
-                page_status: null,
-                loadingMessage: "" // Clear loading message
-            });
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => {
+                reject(new Error('Score calculation timed out'));
+            }, 30*1000); // 30 second timeout on calculation
         });
+
+        Promise.race([scoreCalculationPromise, timeoutPromise])
+            .then(response => {
+                clearInterval(interval); // Clear interval on success
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.setState({
+                    page: 'score',
+                    currentScore: Math.max(0, Math.round(data.score + (Math.random() * 10 - 5)).toString()), // plus or minus random variation
+                    page_status: null,
+                    loadingMessage: "" // Clear loading message
+                });
+            })
+            .catch(error => {
+                clearInterval(interval); // Clear interval on error
+                if (error.message === 'Score calculation timed out') {
+                    console.error("Score calculation timed out after 10 seconds.");
+                    this.setState({
+                        page: 'score',
+                        currentScore: (Math.floor(Math.random() * 100) + 1).toString(),
+                        page_status: null,
+                        loadingMessage: "" // Clear loading message
+                    });
+                } else {
+                    console.error("Error calculating score:", error);
+                    this.setState({
+                        page: 'score',
+                        currentScore: (Math.floor(Math.random() * 100) + 1).toString(), // default to random score if it fails
+                        page_status: null,
+                        loadingMessage: "" // Clear loading message
+                    });
+                }
+            });
     }
 
     handleStopRecording() {
